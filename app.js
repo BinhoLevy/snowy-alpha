@@ -7,7 +7,7 @@ function esc(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'
 function remember(text,type='episodic',confidence=.7){state.memories.unshift({id:crypto.randomUUID(),text,type,confidence,at:new Date().toISOString()});state.memories=state.memories.slice(0,80)}
 function learnDNA(text,confidence=.65){if(!state.dna.some(x=>x.text.toLowerCase()===text.toLowerCase())) state.dna.unshift({id:crypto.randomUUID(),text,confidence,status:'inferred',at:new Date().toISOString()})}
 function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)state.events=[];
- const evData=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i),evHora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/
+ const evData=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i),evHora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);
  const jaExiste=evData&&evHora&&state.events.some(e=>e.data===evData[0]&&e.hora===evHora[0]); 
  if(evData&&evHora&&!jaExiste)state.events.push({data:evData[0],hora:evHora[0],text:text});
  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
