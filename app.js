@@ -13,7 +13,7 @@ function infer(text){const t=text.toLowerCase();remember(text);
  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){state.watches.unshift({id:crypto.randomUUID(),text,status:'WATCHING',created:new Date().toISOString()});}
 }
 function response(text){const t=text.toLowerCase();
- if(/call|reuni[aã]o|compromisso/.test(t)&&/\d/.test(t)) return 'Entendi. Isso é um compromisso. Vou cuidar dele com você.';                       
+ if((/\b\d{1,2}\/\d{1,2}\b/.test(t)||/\bdia\s+\d{1,2}\b/.test(t))&&(/\b\d{1,2}h(?:\d{2})?\b/.test(t)||/\b\d{1,2}:\d{2}\b/.test(t))) return 'Entendi. Isso é um compromisso. Vou cuidar dele com você.';                       
  if(/o que.*(lembra|sabe)|meu dna|aprendeu/.test(t)){const d=state.dna.slice(0,3).map(x=>'• '+x.text).join('\n');return d?`Até agora, aprendi algumas coisas com você:\n${d}\n\nVocê pode me corrigir a qualquer momento.`:'Ainda estou começando a conhecer você. Quanto mais conversarmos, mais precisa eu fico.'}
  if(/como est[aã]o as coisas|tem algo|alguma coisa/.test(t)){if(state.watches.length)return `Está tudo tranquilo por enquanto. Estou de olho em ${state.watches.length} ${state.watches.length===1?'coisa':'coisas'} para você. Se algo realmente merecer sua atenção, vou destacar.`;return 'Está tudo tranquilo. Ainda não encontrei nada que precise da sua atenção agora.'}
  if(/fique de olho|acompanhe/.test(t)) return 'Pode deixar comigo. Coloquei isso no Snowy Watch. Nesta Alpha, vou manter esse acompanhamento registrado e trazê-lo de volta quando você consultar a Snowy.';
