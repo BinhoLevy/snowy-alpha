@@ -6,7 +6,10 @@ function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function remember(text,type='episodic',confidence=.7){state.memories.unshift({id:crypto.randomUUID(),text,type,confidence,at:new Date().toISOString()});state.memories=state.memories.slice(0,80)}
 function learnDNA(text,confidence=.65){if(!state.dna.some(x=>x.text.toLowerCase()===text.toLowerCase())) state.dna.unshift({id:crypto.randomUUID(),text,confidence,status:'inferred',at:new Date().toISOString()})}
-function infer(text){const t=text.toLowerCase();remember(text);
+function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)state.events=[];
+ const evData=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i),evHora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/
+ const jaExiste=evData&&evHora&&state.events.some(e=>e.data===evData[0]&&e.hora===evHora[0]); 
+ if(evData&&evHora&&!jaExiste)state.events.push({data:evData[0],hora:evHora[0],text:text});
  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
  if(/importante|prioridade/.test(t)) learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
  if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
@@ -15,6 +18,7 @@ function infer(text){const t=text.toLowerCase();remember(text);
 function response(text){const t=text.toLowerCase();
  const data=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i);                       
  const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);if(data&&hora)return `Entendi. ${/amanhã/i.test(t)?'Amanhã, ':''}${data[0]} às ${hora[0]}. Isso é um compromisso. Vou cuidar dele com você.`;
+ const jaExiste=!!(data&&hora&&state.events&&state.events.some(e=>e.data===data[0]&&e.hora===hora[0]));
  if(/o que.*(lembra|sabe)|meu dna|aprendeu/.test(t)){const d=state.dna.slice(0,3).map(x=>'• '+x.text).join('\n');return d?`Até agora, aprendi algumas coisas com você:\n${d}\n\nVocê pode me corrigir a qualquer momento.`:'Ainda estou começando a conhecer você. Quanto mais conversarmos, mais precisa eu fico.'}
  if(/como est[aã]o as coisas|tem algo|alguma coisa/.test(t)){if(state.watches.length)return `Está tudo tranquilo por enquanto. Estou de olho em ${state.watches.length} ${state.watches.length===1?'coisa':'coisas'} para você. Se algo realmente merecer sua atenção, vou destacar.`;return 'Está tudo tranquilo. Ainda não encontrei nada que precise da sua atenção agora.'}
  if(/fique de olho|acompanhe/.test(t)) return 'Pode deixar comigo. Coloquei isso no Snowy Watch. Nesta Alpha, vou manter esse acompanhamento registrado e trazê-lo de volta quando você consultar a Snowy.';
