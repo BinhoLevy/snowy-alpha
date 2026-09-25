@@ -12,12 +12,12 @@ function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)
  if(evData&&evHora&&!jaExiste)state.events.push({data:evData[0],hora:evHora[0],text:text});
  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
  if(/importante|prioridade/.test(t)) learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
- if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
+ if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86); computadores
  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){state.watches.unshift({id:crypto.randomUUID(),text,status:'WATCHING',created:new Date().toISOString()});}
 }
 function response(text){const t=text.toLowerCase();
  const data=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i);                       
- const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);if(data&&hora)return `Entendi. ${/amanhã/i.test(t)?'Amanhã, ':''}${data[0]} às ${hora[0]}. Isso é um compromisso. Vou cuidar dele com você.`;
+ const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);
  const jaExiste=!!(data&&hora&&state.events&&state.events.some(e=>e.data===data[0]&&e.hora===hora[0]));
  if(jaExiste)return `Esse compromisso já está comigo: ${data[0]}, às ${hora[0]}.`;
  if(/o que.*(lembra|sabe)|meu dna|aprendeu/.test(t)){const d=state.dna.slice(0,3).map(x=>'• '+x.text).join('\n');return d?`Até agora, aprendi algumas coisas com você:\n${d}\n\nVocê pode me corrigir a qualquer momento.`:'Ainda estou começando a conhecer você. Quanto mais conversarmos, mais precisa eu fico.'}
