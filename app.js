@@ -19,6 +19,7 @@ function response(text){const t=text.toLowerCase();
  const data=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i);                       
  const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);if(data&&hora)return `Entendi. ${/amanhã/i.test(t)?'Amanhã, ':''}${data[0]} às ${hora[0]}. Isso é um compromisso. Vou cuidar dele com você.`;
  const jaExiste=!!(data&&hora&&state.events&&state.events.some(e=>e.data===data[0]&&e.hora===hora[0]));
+ if(jaExiste)return `Esse compromisso já está comigo: ${data[0]}, às ${hora[0]}.`;
  if(/o que.*(lembra|sabe)|meu dna|aprendeu/.test(t)){const d=state.dna.slice(0,3).map(x=>'• '+x.text).join('\n');return d?`Até agora, aprendi algumas coisas com você:\n${d}\n\nVocê pode me corrigir a qualquer momento.`:'Ainda estou começando a conhecer você. Quanto mais conversarmos, mais precisa eu fico.'}
  if(/como est[aã]o as coisas|tem algo|alguma coisa/.test(t)){if(state.watches.length)return `Está tudo tranquilo por enquanto. Estou de olho em ${state.watches.length} ${state.watches.length===1?'coisa':'coisas'} para você. Se algo realmente merecer sua atenção, vou destacar.`;return 'Está tudo tranquilo. Ainda não encontrei nada que precise da sua atenção agora.'}
  if(/fique de olho|acompanhe/.test(t)) return 'Pode deixar comigo. Coloquei isso no Snowy Watch. Nesta Alpha, vou manter esse acompanhamento registrado e trazê-lo de volta quando você consultar a Snowy.';
