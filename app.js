@@ -15,7 +15,7 @@ function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)
  if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86); computadores
  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){state.watches.unshift({id:crypto.randomUUID(),text,status:'WATCHING',created:new Date().toISOString()});}
 }
- function response(text){const t=text.toLowerCase().replace(/\b(\d{1,2})h00(\d{2})\b/g,'$1h$2');
+ function response(text){const t=text.toLowerCase().replace(/\b(\d{1,2})h00\s*(\d{2})\b/g,'$1h$2').replace(/\b(\d{1,2})\s+(?:do|de)\s+(\d{1,2})\b/g,'$1/$2');
  const data=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i);                       
  const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);
  const jaExiste=!!(data&&hora&&state.events&&state.events.some(e=>e.data===data[0]&&e.hora===hora[0]));
