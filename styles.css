@@ -28,3 +28,11 @@
   font-size:30px !important;
   line-height:1 !important;
 }
+  .mic[style*="red"]{
+  animation:snowyPulse 1s ease-in-out infinite;
+}
+
+  @keyframes snowyPulse{
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.25);opacity:.55}
+}
