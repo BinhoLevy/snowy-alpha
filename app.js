@@ -12,7 +12,7 @@ function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)
  if(evData&&evHora&&!jaExiste)state.events.push({data:evData[0],hora:evHora[0],text:text});
  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
  if(/importante|prioridade/.test(t)) learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
- if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86); computadores
+ if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){state.watches.unshift({id:crypto.randomUUID(),text,status:'WATCHING',created:new Date().toISOString()});}
 }
  function response(text){const t=text.toLowerCase().replace(/\b(\d{1,2})h00\s*(?:e\s*)?(\d{2})\b/g,'$1h$2').replace(/\b(\d{1,2})\s+(?:do|de)\s+(\d{1,2})\b/g,'$1/$2');
