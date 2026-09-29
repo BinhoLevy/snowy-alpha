@@ -1,5 +1,5 @@
 const KEY='snowy-alpha-state-v1';
-const initial={onboarded:false,name:'Herbert',focus:'',memories:[],dna:[],watches:[],messages:[],feedback:[]};
+const initial={onboarded:false,name:'Herbert',focus:'',memories:[],dna:[],watches:[],events:[],feedback:[]};
 let state=load(); let view=state.onboarded?'home':'welcome';
 function load(){try{return {...initial,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return {...initial}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
