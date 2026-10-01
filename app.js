@@ -1,46 +1,402 @@
 const KEY='snowy-alpha-state-v1';
-const initial={onboarded:false,name:'Herbert',focus:'',memories:[],dna:[],watches:[],events:[],feedback:[]};
-let state=load(); let view=state.onboarded?'home':'welcome';
+const CORE_URL='https://snowy-core.binholevy.workers.dev/';
+
+const initial={onboarded:false,name:'Herbert',focus:'',memories:[],dna:[],watches:[],events:[],messages:[],feedback:[]};
+
+let state=load();
+let view=state.onboarded?'home':'welcome';
+
 function load(){try{return {...initial,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return {...initial}}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function esc(s=''){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function remember(text,type='episodic',confidence=.7){state.memories.unshift({id:crypto.randomUUID(),text,type,confidence,at:new Date().toISOString()});state.memories=state.memories.slice(0,80)}
-function learnDNA(text,confidence=.65){if(!state.dna.some(x=>x.text.toLowerCase()===text.toLowerCase())) state.dna.unshift({id:crypto.randomUUID(),text,confidence,status:'inferred',at:new Date().toISOString()})}
-function infer(text){const t=text.toLowerCase();remember(text);if(!state.events)state.events=[];
- if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
- if(/importante|prioridade/.test(t)) learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
- if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
- if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){state.watches.unshift({id:crypto.randomUUID(),text,status:'WATCHING',created:new Date().toISOString()});}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function remember(text,type='episodic',confidence=.7){
+  state.memories.unshift({id:crypto.randomUUID(),text,type,confidence,at:new Date().toISOString()});
+  state.memories=state.memories.slice(0,80);
 }
- function response(text){const t=text.toLowerCase().replace(/\b(\d{1,2})h00\s*(?:e\s*)?(\d{2})\b/g,'$1h$2').replace(/\b(\d{1,2})\s+(?:do|de)\s+(\d{1,2})\b/g,'$1/$2');
- const data=t.match(/\b\d{1,2}\/\d{1,2}\b|dia\s+\d{1,2}(?:\s+de\s+[a-zç]+)?/i);                       
- const hora=t.match(/\b\d{1,2}h(?:\d{2})?\b|\b\d{1,2}:\d{2}\b/i);
- const jaExiste=!!(data&&hora&&state.events&&state.events.some(e=>e.data===data[0]&&e.hora===hora[0]));
- if(jaExiste)return `Esse compromisso já está comigo: ${data[0]}, às ${hora[0]}.`;
- if(data&&hora&&/\b(?:café|bar|restaurante|hotel|pousada|clínica|clinica|hospital|consultório|consultorio|empresa|escritório|escritorio|loja)\b/i.test(t)&&!/\b(?:café|bar|restaurante|hotel|pousada|clínica|clinica|hospital|consultório|consultorio|empresa|escritório|escritorio|loja)\s+[a-záàâãéêíóôõúç]{3,}/i.test(t))return `Entendi a data e o horário, mas não tenho certeza se entendi corretamente o nome do local. Pode repetir só o nome, um pouco mais devagar?`;
- if(data&&hora){state.events.push({data:data[0],hora:hora[0],text:text});return `Entendi, ${/amanhã/i.test(t)?'amanhã, ':''}${data[0]} às ${hora[0]}. Isso é um compromisso. Vou cuidar dele com você.`;}
- if(/o que.*(lembra|sabe)|meu dna|aprendeu/.test(t)){const d=state.dna.slice(0,3).map(x=>'• '+x.text).join('\n');return d?`Até agora, aprendi algumas coisas com você:\n${d}\n\nVocê pode me corrigir a qualquer momento.`:'Ainda estou começando a conhecer você. Quanto mais conversarmos, mais precisa eu fico.'}
- if(/como est[aã]o as coisas|tem algo|alguma coisa/.test(t)){if(state.watches.length)return `Está tudo tranquilo por enquanto. Estou de olho em ${state.watches.length} ${state.watches.length===1?'coisa':'coisas'} para você. Se algo realmente merecer sua atenção, vou destacar.`;return 'Está tudo tranquilo. Ainda não encontrei nada que precise da sua atenção agora.'}
- if(/fique de olho|acompanhe/.test(t)) return 'Pode deixar comigo. Coloquei isso no Snowy Watch. Nesta Alpha, vou manter esse acompanhamento registrado e trazê-lo de volta quando você consultar a Snowy.';
- if(/não guarde|nao guarde/.test(t)) return 'Entendi. Nesta Alpha, você pode apagar as memórias em Meu DNA. Na versão seguinte, essa instrução será aplicada diretamente à memória citada.';
- const direct=state.dna.find(x=>/direta/.test(x.text.toLowerCase()));
- return `${direct?'Vou ser direta: ':''}entendi. Vou manter isso no contexto da nossa relação e, se perceber que é uma preferência ou prioridade recorrente, vou confirmar com você antes de tratá-la como parte do seu DNA.`;
+
+function learnDNA(text,confidence=.65){
+  if(!state.dna.some(x=>x.text.toLowerCase()===text.toLowerCase())){
+    state.dna.unshift({id:crypto.randomUUID(),text,confidence,status:'inferred',at:new Date().toISOString()});
+  }
 }
-function nav(){return `<div class="nav"><div class="nav-inner">${[['home','❄️','Snowy'],['chat','💬','Conversar'],['dna','🧬','Meu DNA'],['life','◎','Minha Vida']].map(([v,i,l])=>`<button data-view="${v}" class="${view===v?'active':''}">${i}<br>${l}</button>`).join('')}</div></div>`}
-function saudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
-function render(){const app=document.querySelector('#app');
- if(view==='welcome'){app.innerHTML=`<section class="shell center"><div class="snow"><img src="apple-touch-icon.png" alt="Snowy"></div><div class="brand">SNOWY</div><h1 class="tag">Sua segunda pele.</h1><p class="sub">Uma camada inteligente entre você e você mesmo.</p><button class="primary" id="meet">Conhecer minha Snowy</button><p class="tiny">Alpha 0.1 · User 0001</p></section>`;document.querySelector('#meet').onclick=()=>{view='intro';render()};return}
- if(view==='intro'){app.innerHTML=`<section class="shell center"><div class="snow"><img src="apple-touch-icon.png" alt="Snowy"></div><h1>Olá, Herbert.<br>Eu sou a sua Snowy.</h1><p class="sub">Neste momento ainda conheço muito pouco sobre você. Mas isso vai mudar. Não preciso que você me conte sua vida inteira. Vou aprender com você.</p><p><strong>Quanto mais você vive comigo, mais sua eu me torno.</strong></p><button class="primary" id="start">Vamos começar</button></section>`;document.querySelector('#start').onclick=()=>{view='question';render()};return}
- if(view==='question'){app.innerHTML=`<section class="shell center onboard"><div class="eyebrow">NOSSO PRIMEIRO PASSO</div><h1>Qual é a primeira coisa que você gostaria que eu ajudasse a melhorar na sua vida?</h1><p class="sub">Pode me contar do seu jeito.</p><textarea id="focus" placeholder="Escreva naturalmente..."></textarea><button class="primary" id="continue">Continuar</button></section>`;document.querySelector('#continue').onclick=()=>{const x=document.querySelector('#focus').value.trim();if(!x)return;state.focus=x;remember(x,'goal',.95);learnDNA('Prioridade inicial: '+x,.9);save();view='confirm';render()};return}
- if(view==='confirm'){app.innerHTML=`<section class="shell center"><div class="snow">🧬</div><h1>Seu Snowy DNA começou.</h1><p class="sub">Entendi que, neste começo, você quer minha atenção especialmente para:</p><div class="card"><strong>${esc(state.focus)}</strong></div><p class="sub">Vou aprender com você — suas preferências, prioridades, objetivos, hábitos e limites. Você sempre poderá me corrigir.</p><h2>Você é único.<br>Assim como a sua Snowy.</h2><button class="primary" id="finish">Entrar na minha Snowy</button></section>`;document.querySelector('#finish').onclick=()=>{state.onboarded=true;state.messages=[{role:'snowy',text:'Estou começando a conhecer você. Pode falar comigo normalmente. Se quiser que eu acompanhe alguma coisa, é só me pedir.”'}];save();view='home';render()};return}
- const body=view==='home'?home():view==='chat'?chat():view==='dna'?dna():life();app.innerHTML=`<section class="shell">${body}</section>${nav()}`;bind();}
-function home(){return `<div class="home-simple"><h1 class="home-title">${saudacao()}, Herbert.</h1><p class="home-calm">Está tudo tranquilo por aqui.</p><button class="primary" data-view="chat">🎙️ Falar com a Snowy</button><p class="muted" style="text-align:center;margin-top:18px">ou escreva para mim...</p></div>`}
-function chat(){return `<h1 class="home-title">Conversar</h1><div class="chat" id="messages">${state.messages.map(m=>`<div class="bubble ${m.role==='user'?'user':'snowy'}">${esc(m.text)}</div>`).join('')}</div><div class="composer"><textarea id="msg" rows="3" autocomplete="off" placeholder="Fale comigo..."></textarea><button type="button" id="mic" class="mic" aria-label="Falar com a Snowy">🎙️</button><button class="send" id="send">↑</button></div>`}
-function dna(){return `<h1 class="home-title">🧬 Meu DNA</h1><p class="muted">O que estou aprendendo com você. Inferências têm confiança e podem ser corrigidas.</p><div class="list">${state.dna.length?state.dna.map(x=>`<div class="item"><strong>${esc(x.text)}</strong><br><span class="pill">${Math.round(x.confidence*100)}% confiança</span><span class="pill">${x.status}</span></div>`).join(''):'<div class="item">Ainda estamos começando.</div>'}</div><div class="card"><div class="eyebrow">MEMÓRIA</div><p>${state.memories.length} registros locais nesta Alpha.</p><button class="secondary" id="clearMemory">Apagar dados locais da Alpha</button></div>`}
-function life(){return `<h1 class="home-title">◎ Minha Vida</h1><p class="muted">Primeira representação do seu Life Map.</p><div class="card"><div class="eyebrow">PRIORIDADE INICIAL</div><p><strong>${esc(state.focus||'Ainda não definida')}</strong></p></div><div class="card"><div class="eyebrow">SNOWY WATCH</div>${state.watches.length?state.watches.map(x=>`<div class="item">👁️ ${esc(x.text)}<br><span class="pill">${x.status}</span></div>`).join(''):'<p class="muted">Nada em acompanhamento.</p>'}</div>`}
-function bind(){document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;render()});const send=document.querySelector('#send');if(send){const go=()=>{const i=document.querySelector('#msg');const text=i.value.trim();if(!text)return;state.messages.push({role:'user',text});infer(text);state.messages.push({role:'snowy',text:response(text)});save();render();setTimeout(()=>document.querySelector('#messages')?.lastElementChild?.scrollIntoView({behavior:'smooth'}),0)};send.onclick=()=>{go()};document.querySelector('#msg').onkeydown=e=>{if(e.key==='Enter')go()}}
- const msg=document.querySelector('#msg');if(msg){const grow=()=>{msg.style.height='auto';msg.style.height=Math.min(msg.scrollHeight,180)+'px'};msg.addEventListener('input',grow);grow()}
- const mic=document.querySelector('#mic');if(mic){let r=null,ouvindo=false,parar=false,base='';mic.onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('O reconhecimento de voz ainda não está disponível neste navegador.');return}if(ouvindo){parar=true;ouvindo=false;mic.style.color='';if(r)r.stop();return}parar=false;ouvindo=true;base=(document.querySelector('#msg')?.value||'').trim();const iniciar=()=>{if(parar||!ouvindo)return;r=new SR();r.lang='pt-BR';r.interimResults=true;r.continuous=true;mic.style.color='red';r.onresult=e=>{let final='',temp='';for(let n=0;n<e.results.length;n++){const x=e.results[n][0].transcript;if(e.results[n].isFinal)final+=x+' ';else temp+=x}const i=document.querySelector('#msg');if(i){i.value=(base+' '+final+temp).trim();i.dispatchEvent(new Event('input'))}};r.onend=()=>{if(parar||!ouvindo){mic.style.color='';return}const i=document.querySelector('#msg');base=(i?.value||base).trim();setTimeout(()=>{if(ouvindo&&!parar)iniciar()},250)};r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){parar=true;ouvindo=false;mic.style.color=''}};try{r.start()}catch(e){}};iniciar()}}
- const cm=document.querySelector('#clearMemory');if(cm)cm.onclick=()=>{if(confirm('Apagar todos os dados locais desta Alpha?')){localStorage.removeItem(KEY);state={...initial};view='welcome';render()}};
- const mo=document.querySelector('#moment');if(mo)mo.onclick=()=>{state.feedback.unshift({type:'snowy_moment',at:new Date().toISOString()});save();alert('Snowy Moment registrado. ⭐')}}
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});render();
+
+function inferLocal(text){
+  const t=text.toLowerCase();
+  remember(text);
+
+  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)) learnDNA(text,.78);
+  if(/importante|prioridade/.test(t)) learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
+  if(/diret/.test(t)) learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
+
+  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){
+    state.watches.unshift({
+      id:crypto.randomUUID(),
+      text,
+      status:'WATCHING',
+      created:new Date().toISOString()
+    });
+  }
+}
+
+async function askSnowyCore(message){
+  const response=await fetch(CORE_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({message})
+  });
+
+  const data=await response.json();
+
+  if(!response.ok || !data.ok){
+    throw new Error(data.details || data.error || 'Snowy Core indisponível.');
+  }
+
+  return data;
+}
+
+function applyUnderstanding(data,originalText){
+  const u=data?.understanding;
+  if(!u)return;
+
+  if((u.type==='task'||u.type==='event')&&(u.date||u.time||u.action)){
+    if(!state.events)state.events=[];
+
+    const duplicate=state.events.some(e=>
+      e.date===u.date &&
+      e.time===u.time &&
+      String(e.action||'').toLowerCase()===String(u.action||'').toLowerCase()
+    );
+
+    if(!duplicate){
+      state.events.unshift({
+        id:crypto.randomUUID(),
+        type:u.type,
+        date:u.date,
+        time:u.time,
+        action:u.action,
+        people:u.people||[],
+        location:u.location,
+        text:originalText,
+        created:new Date().toISOString()
+      });
+    }
+  }
+
+  if(u.type==='preference'&&u.action){
+    learnDNA(u.action,.8);
+  }
+}
+
+function nav(){
+  return `<div class="nav"><div class="nav-inner">${
+    [['home','❄️','Snowy'],['chat','💬','Conversar'],['dna','🧬','Meu DNA'],['life','◎','Minha Vida']]
+    .map(([v,i,l])=>`<button data-view="${v}" class="${view===v?'active':''}">${i}<br>${l}</button>`)
+    .join('')
+  }</div></div>`;
+}
+
+function saudacao(){
+  const h=new Date().getHours();
+  return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite';
+}
+
+function render(){
+  const app=document.querySelector('#app');
+
+  if(view==='welcome'){
+    app.innerHTML=`<section class="shell center"><div class="snow"><img src="apple-touch-icon.png" alt="Snowy"></div><div class="brand">SNOWY</div><h1 class="tag">Sua segunda pele.</h1><p class="sub">Uma camada inteligente entre você e você mesmo.</p><button class="primary" id="meet">Conhecer minha Snowy</button><p class="tiny">Alpha 0.1 · User 0001</p></section>`;
+    document.querySelector('#meet').onclick=()=>{view='intro';render()};
+    return;
+  }
+
+  if(view==='intro'){
+    app.innerHTML=`<section class="shell center"><div class="snow"><img src="apple-touch-icon.png" alt="Snowy"></div><h1>Olá, Herbert.<br>Eu sou a sua Snowy.</h1><p class="sub">Neste momento ainda conheço muito pouco sobre você. Mas isso vai mudar. Não preciso que você me conte sua vida inteira. Vou aprender com você.</p><p><strong>Quanto mais você vive comigo, mais sua eu me torno.</strong></p><button class="primary" id="start">Vamos começar</button></section>`;
+    document.querySelector('#start').onclick=()=>{view='question';render()};
+    return;
+  }
+
+  if(view==='question'){
+    app.innerHTML=`<section class="shell center onboard"><div class="eyebrow">NOSSO PRIMEIRO PASSO</div><h1>Qual é a primeira coisa que você gostaria que eu ajudasse a melhorar na sua vida?</h1><p class="sub">Pode me contar do seu jeito.</p><textarea id="focus" placeholder="Escreva naturalmente..."></textarea><button class="primary" id="continue">Continuar</button></section>`;
+
+    document.querySelector('#continue').onclick=()=>{
+      const x=document.querySelector('#focus').value.trim();
+      if(!x)return;
+      state.focus=x;
+      remember(x,'goal',.95);
+      learnDNA('Prioridade inicial: '+x,.9);
+      save();
+      view='confirm';
+      render();
+    };
+    return;
+  }
+
+  if(view==='confirm'){
+    app.innerHTML=`<section class="shell center"><div class="snow">🧬</div><h1>Seu Snowy DNA começou.</h1><p class="sub">Entendi que, neste começo, você quer minha atenção especialmente para:</p><div class="card"><strong>${esc(state.focus)}</strong></div><p class="sub">Vou aprender com você — suas preferências, prioridades, objetivos, hábitos e limites. Você sempre poderá me corrigir.</p><h2>Você é único.<br>Assim como a sua Snowy.</h2><button class="primary" id="finish">Entrar na minha Snowy</button></section>`;
+
+    document.querySelector('#finish').onclick=()=>{
+      state.onboarded=true;
+      state.messages=[{
+        role:'snowy',
+        text:'Estou começando a conhecer você. Pode falar comigo normalmente. Se quiser que eu acompanhe alguma coisa, é só me pedir.'
+      }];
+      save();
+      view='home';
+      render();
+    };
+    return;
+  }
+
+  const body=view==='home'?home():view==='chat'?chat():view==='dna'?dna():life();
+  app.innerHTML=`<section class="shell">${body}</section>${nav()}`;
+  bind();
+}
+
+function home(){
+  return `<div class="home-simple"><h1 class="home-title">${saudacao()}, Herbert.</h1><p class="home-calm">Está tudo tranquilo por aqui.</p><button class="primary" data-view="chat">🎙️ Falar com a Snowy</button><p class="muted" style="text-align:center;margin-top:18px">ou escreva para mim...</p></div>`;
+}
+
+function chat(){
+  return `<h1 class="home-title">Conversar</h1><div class="chat" id="messages">${
+    state.messages.map(m=>`<div class="bubble ${m.role==='user'?'user':'snowy'}">${esc(m.text)}</div>`).join('')
+  }</div><div class="composer"><textarea id="msg" rows="3" autocomplete="off" placeholder="Fale comigo..."></textarea><button type="button" id="mic" class="mic" aria-label="Falar com a Snowy">🎙️</button><button class="send" id="send">↑</button></div>`;
+}
+
+function dna(){
+  return `<h1 class="home-title">🧬 Meu DNA</h1><p class="muted">O que estou aprendendo com você. Inferências têm confiança e podem ser corrigidas.</p><div class="list">${
+    state.dna.length
+      ?state.dna.map(x=>`<div class="item"><strong>${esc(x.text)}</strong><br><span class="pill">${Math.round(x.confidence*100)}% confiança</span><span class="pill">${x.status}</span></div>`).join('')
+      :'<div class="item">Ainda estamos começando.</div>'
+  }</div><div class="card"><div class="eyebrow">MEMÓRIA</div><p>${state.memories.length} registros locais nesta Alpha.</p><button class="secondary" id="clearMemory">Apagar dados locais da Alpha</button></div>`;
+}
+
+function life(){
+  const events=state.events||[];
+
+  return `<h1 class="home-title">◎ Minha Vida</h1>
+  <p class="muted">Primeira representação do seu Life Map.</p>
+
+  <div class="card">
+    <div class="eyebrow">PRIORIDADE INICIAL</div>
+    <p><strong>${esc(state.focus||'Ainda não definida')}</strong></p>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">COMPROMISSOS E TAREFAS</div>
+    ${
+      events.length
+      ?events.slice(0,10).map(e=>`
+        <div class="item">
+          <strong>${esc(e.action||e.text||'Compromisso')}</strong><br>
+          <span class="pill">${esc(e.date||'sem data')}</span>
+          <span class="pill">${esc(e.time||'sem horário')}</span>
+          ${e.location?`<span class="pill">${esc(e.location)}</span>`:''}
+        </div>
+      `).join('')
+      :'<p class="muted">Nenhum compromisso registrado.</p>'
+    }
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">SNOWY WATCH</div>
+    ${
+      state.watches.length
+      ?state.watches.map(x=>`<div class="item">👁️ ${esc(x.text)}<br><span class="pill">${x.status}</span></div>`).join('')
+      :'<p class="muted">Nada em acompanhamento.</p>'
+    }
+  </div>`;
+}
+
+function bind(){
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{
+    view=b.dataset.view;
+    render();
+  });
+
+  const send=document.querySelector('#send');
+
+  if(send){
+    let sending=false;
+
+    const go=async()=>{
+      if(sending)return;
+
+      const i=document.querySelector('#msg');
+      const text=i.value.trim();
+
+      if(!text)return;
+
+      sending=true;
+
+      state.messages.push({role:'user',text});
+      inferLocal(text);
+      save();
+      render();
+
+      try{
+        const data=await askSnowyCore(text);
+
+        applyUnderstanding(data,text);
+
+        state.messages.push({
+          role:'snowy',
+          text:data.reply||'Entendi.'
+        });
+
+      }catch(error){
+        console.error('Snowy Core:',error);
+
+        state.messages.push({
+          role:'snowy',
+          text:'Tive uma dificuldade para acessar meu cérebro agora. Tente novamente em alguns instantes.'
+        });
+      }
+
+      save();
+      sending=false;
+      render();
+
+      setTimeout(()=>{
+        document.querySelector('#messages')
+          ?.lastElementChild
+          ?.scrollIntoView({behavior:'smooth'});
+      },0);
+    };
+
+    send.onclick=()=>{go()};
+
+    document.querySelector('#msg').onkeydown=e=>{
+      if(e.key==='Enter'&&!e.shiftKey){
+        e.preventDefault();
+        go();
+      }
+    };
+  }
+
+  const msg=document.querySelector('#msg');
+
+  if(msg){
+    const grow=()=>{
+      msg.style.height='auto';
+      msg.style.height=Math.min(msg.scrollHeight,180)+'px';
+    };
+
+    msg.addEventListener('input',grow);
+    grow();
+  }
+
+  const mic=document.querySelector('#mic');
+
+  if(mic){
+    let r=null,ouvindo=false,parar=false,base='';
+
+    mic.onclick=()=>{
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+      if(!SR){
+        alert('O reconhecimento de voz ainda não está disponível neste navegador.');
+        return;
+      }
+
+      if(ouvindo){
+        parar=true;
+        ouvindo=false;
+        mic.style.color='';
+        if(r)r.stop();
+        return;
+      }
+
+      parar=false;
+      ouvindo=true;
+      base=(document.querySelector('#msg')?.value||'').trim();
+
+      const iniciar=()=>{
+        if(parar||!ouvindo)return;
+
+        r=new SR();
+        r.lang='pt-BR';
+        r.interimResults=true;
+        r.continuous=true;
+        mic.style.color='red';
+
+        r.onresult=e=>{
+          let final='',temp='';
+
+          for(let n=0;n<e.results.length;n++){
+            const x=e.results[n][0].transcript;
+
+            if(e.results[n].isFinal)final+=x+' ';
+            else temp+=x;
+          }
+
+          const i=document.querySelector('#msg');
+
+          if(i){
+            i.value=(base+' '+final+temp).trim();
+            i.dispatchEvent(new Event('input'));
+          }
+        };
+
+        r.onend=()=>{
+          if(parar||!ouvindo){
+            mic.style.color='';
+            return;
+          }
+
+          const i=document.querySelector('#msg');
+          base=(i?.value||base).trim();
+
+          setTimeout(()=>{
+            if(ouvindo&&!parar)iniciar();
+          },250);
+        };
+
+        r.onerror=e=>{
+          if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+            parar=true;
+            ouvindo=false;
+            mic.style.color='';
+          }
+        };
+
+        try{r.start()}catch(e){}
+      };
+
+      iniciar();
+    };
+  }
+
+  const cm=document.querySelector('#clearMemory');
+
+  if(cm){
+    cm.onclick=()=>{
+      if(confirm('Apagar todos os dados locais desta Alpha?')){
+        localStorage.removeItem(KEY);
+        state={...initial};
+        view='welcome';
+        render();
+      }
+    };
+  }
+
+  const mo=document.querySelector('#moment');
+
+  if(mo){
+    mo.onclick=()=>{
+      state.feedback.unshift({
+        type:'snowy_moment',
+        at:new Date().toISOString()
+      });
+
+      save();
+      alert('Snowy Moment registrado. ⭐');
+    };
+  }
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+render();
