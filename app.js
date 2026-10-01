@@ -40,10 +40,18 @@ function inferLocal(text){
 }
 
 async function askSnowyCore(message){
-  const response=await fetch(CORE_URL,{
+  const response=await fetch(CORE_URL,{ 
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({message})
+    body:JSON.stringify({
+  message,
+  context:{
+    recent_messages:(state.messages || []).slice(-10),
+    events:(state.events || []).slice(0,20),
+    dna:(state.dna || []).slice(0,20),
+    focus:state.focus || ''
+  }
+})
   });
 
   const data=await response.json();
