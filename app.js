@@ -146,6 +146,7 @@ function applyUnderstanding(data,originalText){
           ?u.people
           :(existing.people||[]),
         location:u.location??existing.location,
+        status:u.status||existing.status||'planned',
         text:originalText,
         updated:new Date().toISOString()
       };
@@ -177,6 +178,7 @@ function applyUnderstanding(data,originalText){
           ?u.people
           :(existing.people||[]),
         location:u.location??existing.location,
+        status:u.status||existing.status||'planned',
         text:originalText,
         updated:new Date().toISOString()
       };
@@ -208,6 +210,7 @@ function applyUnderstanding(data,originalText){
         action:u.action,
         people:u.people||[],
         location:u.location,
+        status:u.status||'planned',
         text:originalText,
         created:new Date().toISOString()
       });
@@ -218,6 +221,7 @@ function applyUnderstanding(data,originalText){
     learnDNA(u.action,.8);
   }
 }
+
 function nav(){
   return `<div class="nav"><div class="nav-inner">${
     [
@@ -241,6 +245,89 @@ function saudacao(){
     :h>=12&&h<18
       ?'Boa tarde'
       :'Boa noite';
+}
+
+function eventStatus(e){
+  if(e.status){
+    return e.status;
+  }
+
+  if(!e.date){
+    return 'planned';
+  }
+
+  const now=new Date();
+  const today=[
+    now.getFullYear(),
+    String(now.getMonth()+1).padStart(2,'0'),
+    String(now.getDate()).padStart(2,'0')
+  ].join('-');
+
+  if(e.date<today){
+    return 'unknown';
+  }
+
+  if(e.date>today){
+    return 'planned';
+  }
+
+  if(!e.time){
+    return 'planned';
+  }
+
+  const currentTime=
+    String(now.getHours()).padStart(2,'0')+':'+
+    String(now.getMinutes()).padStart(2,'0');
+
+  return e.time<currentTime
+    ?'unknown'
+    :'planned';
+}
+
+function statusLabel(status){
+  const labels={
+    planned:'Planejado',
+    completed:'Aconteceu',
+    cancelled:'Cancelado',
+    did_not_happen:'Não aconteceu',
+    unknown:'Desfecho ainda não confirmado',
+    genesis:'Snowy Genesis'
+  };
+
+  return labels[status]||status;
+}
+
+function eventCard(e,showStatus=false){
+  const status=eventStatus(e);
+
+  return `
+    <div class="item">
+      <strong>
+        ${esc(e.action||e.text||'Compromisso')}
+      </strong>
+      <br>
+
+      <span class="pill">
+        ${esc(e.date||'sem data')}
+      </span>
+
+      <span class="pill">
+        ${esc(e.time||'sem horário')}
+      </span>
+
+      ${
+        e.location
+          ?`<span class="pill">${esc(e.location)}</span>`
+          :''
+      }
+
+      ${
+        showStatus
+          ?`<span class="pill">${esc(statusLabel(status))}</span>`
+          :''
+      }
+    </div>
+  `;
 }
 
 function render(){
@@ -527,6 +614,23 @@ function dna(){
 function life(){
   const events=state.events||[];
 
+  const current=events.filter(e=>
+    eventStatus(e)==='planned'
+  );
+
+  const archive=events.filter(e=>
+    [
+      'completed',
+      'cancelled',
+      'did_not_happen',
+      'unknown'
+    ].includes(eventStatus(e))
+  );
+
+  const genesis=events.filter(e=>
+    eventStatus(e)==='genesis'
+  );
+
   return `
     <h1 class="home-title">
       ◎ Minha Vida
@@ -550,34 +654,51 @@ function life(){
 
     <div class="card">
       <div class="eyebrow">
-        COMPROMISSOS E TAREFAS
+        AGORA E FUTURO
       </div>
 
       ${
-        events.length
-          ?events.slice(0,10).map(e=>`
-            <div class="item">
-              <strong>
-                ${esc(e.action||e.text||'Compromisso')}
-              </strong>
-              <br>
+        current.length
+          ?current.slice(0,10).map(e=>
+            eventCard(e,false)
+          ).join('')
+          :'<p class="muted">Nenhum compromisso futuro registrado.</p>'
+      }
+    </div>
 
-              <span class="pill">
-                ${esc(e.date||'sem data')}
-              </span>
+    <div class="card">
+      <div class="eyebrow">
+        LIFE ARCHIVE · PASSADO
+      </div>
 
-              <span class="pill">
-                ${esc(e.time||'sem horário')}
-              </span>
+      <p class="muted">
+        O que já passou continua fazendo parte da sua história.
+      </p>
 
-              ${
-                e.location
-                  ?`<span class="pill">${esc(e.location)}</span>`
-                  :''
-              }
-            </div>
-          `).join('')
-          :'<p class="muted">Nenhum compromisso registrado.</p>'
+      ${
+        archive.length
+          ?archive.slice(0,20).map(e=>
+            eventCard(e,true)
+          ).join('')
+          :'<p class="muted">Seu Life Archive ainda está começando.</p>'
+      }
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">
+        SNOWY GENESIS · USER 0001
+      </div>
+
+      <p class="muted">
+        Testes e momentos da história de como sua Snowy começou.
+      </p>
+
+      ${
+        genesis.length
+          ?genesis.slice(0,20).map(e=>
+            eventCard(e,true)
+          ).join('')
+          :'<p class="muted">Nenhum registro Genesis por enquanto.</p>'
       }
     </div>
 
