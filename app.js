@@ -1,21 +1,84 @@
 const KEY='snowy-alpha-state-v1';
 const CORE_URL='https://snowy-core.binholevy.workers.dev/';
 
-const initial={onboarded:false,name:'Herbert',focus:'',memories:[],dna:[],watches:[],events:[],messages:[],feedback:[]};
+const initial={
+  onboarded:false,
+  name:'Herbert',
+  focus:'',
+  memories:[],
+  dna:[],
+  watches:[],
+  events:[],
+  nodes:[],
+  relations:[],
+  messages:[],
+  feedback:[]
+};
 
 let state=load();
 let view=state.onboarded?'home':'welcome';
 
 function load(){
   try{
-    return {...initial,...JSON.parse(localStorage.getItem(KEY)||'{}')}
+    const loaded={
+      ...initial,
+      ...JSON.parse(localStorage.getItem(KEY)||'{}')
+    };
+
+    loaded.memories=Array.isArray(loaded.memories)
+      ?loaded.memories
+      :[];
+
+    loaded.dna=Array.isArray(loaded.dna)
+      ?loaded.dna
+      :[];
+
+    loaded.watches=Array.isArray(loaded.watches)
+      ?loaded.watches
+      :[];
+
+    loaded.events=Array.isArray(loaded.events)
+      ?loaded.events
+      :[];
+
+    loaded.nodes=Array.isArray(loaded.nodes)
+      ?loaded.nodes
+      :[];
+
+    loaded.relations=Array.isArray(loaded.relations)
+      ?loaded.relations
+      :[];
+
+    loaded.messages=Array.isArray(loaded.messages)
+      ?loaded.messages
+      :[];
+
+    loaded.feedback=Array.isArray(loaded.feedback)
+      ?loaded.feedback
+      :[];
+
+    return loaded;
+
   }catch{
-    return {...initial}
+    return {
+      ...initial,
+      memories:[],
+      dna:[],
+      watches:[],
+      events:[],
+      nodes:[],
+      relations:[],
+      messages:[],
+      feedback:[]
+    };
   }
 }
 
 function save(){
-  localStorage.setItem(KEY,JSON.stringify(state))
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(state)
+  );
 }
 
 function esc(s=''){
@@ -25,7 +88,7 @@ function esc(s=''){
     '>':'&gt;',
     '"':'&quot;',
     "'":'&#39;'
-  }[c]))
+  }[c]));
 }
 
 function remember(text,type='episodic',confidence=.7){
@@ -41,7 +104,11 @@ function remember(text,type='episodic',confidence=.7){
 }
 
 function learnDNA(text,confidence=.65){
-  if(!state.dna.some(x=>x.text.toLowerCase()===text.toLowerCase())){
+  if(
+    !state.dna.some(
+      x=>x.text.toLowerCase()===text.toLowerCase()
+    )
+  ){
     state.dna.unshift({
       id:crypto.randomUUID(),
       text,
@@ -57,19 +124,29 @@ function inferLocal(text){
 
   remember(text);
 
-  if(/prefiro|gosto de|quero que você|quero que voce/.test(t)){
+  if(
+    /prefiro|gosto de|quero que você|quero que voce/.test(t)
+  ){
     learnDNA(text,.78);
   }
 
   if(/importante|prioridade/.test(t)){
-    learnDNA('Valoriza que a Snowy destaque o que é realmente importante.',.72);
+    learnDNA(
+      'Valoriza que a Snowy destaque o que é realmente importante.',
+      .72
+    );
   }
 
   if(/diret/.test(t)){
-    learnDNA('Prefere comunicação direta quando algo merece atenção.',.86);
+    learnDNA(
+      'Prefere comunicação direta quando algo merece atenção.',
+      .86
+    );
   }
 
-  if(/fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)){
+  if(
+    /fique de olho|acompanhe|não me deixe esquecer|nao me deixe esquecer/.test(t)
+  ){
     state.watches.unshift({
       id:crypto.randomUUID(),
       text,
@@ -90,6 +167,8 @@ async function askSnowyCore(message){
       context:{
         recent_messages:(state.messages||[]).slice(-10),
         events:(state.events||[]).slice(0,20),
+        nodes:(state.nodes||[]).slice(0,30),
+        relations:(state.relations||[]).slice(0,50),
         dna:(state.dna||[]).slice(0,20),
         focus:state.focus||''
       }
@@ -108,6 +187,598 @@ async function askSnowyCore(message){
 
   return data;
 }
+
+
+/* =========================================================
+   SNOWY BRIDGE 0.1
+   Core interpreta.
+   Bridge valida.
+   Life Map muda.
+   ========================================================= */
+
+function bridgeProperties(change){
+  const result={};
+
+  if(!Array.isArray(change?.properties)){
+    return result;
+  }
+
+  for(const item of change.properties){
+    if(
+      !item||
+      typeof item.key!=='string'||
+      !item.key.trim()
+    ){
+      continue;
+    }
+
+    result[item.key]=item.value;
+  }
+
+  return result;
+}
+
+function findLifeNode(id){
+  if(!id)return null;
+
+  const eventIndex=(state.events||[])
+    .findIndex(x=>x.id===id);
+
+  if(eventIndex!==-1){
+    return {
+      collection:'events',
+      index:eventIndex,
+      item:state.events[eventIndex]
+    };
+  }
+
+  const nodeIndex=(state.nodes||[])
+    .findIndex(x=>x.id===id);
+
+  if(nodeIndex!==-1){
+    return {
+      collection:'nodes',
+      index:nodeIndex,
+      item:state.nodes[nodeIndex]
+    };
+  }
+
+  return null;
+}
+
+function bridgeCreateNode(change,originalText){
+  if(change.target_id!==null){
+    return false;
+  }
+
+  if(change.requires_confirmation){
+    return false;
+  }
+
+  const nodeType=change.node_type||'other';
+  const props=bridgeProperties(change);
+
+  if(nodeType==='event'||nodeType==='task'){
+    const action=
+      props.action||
+      change.label||
+      null;
+
+    const date=
+      props.date??null;
+
+    const time=
+      props.time??null;
+
+    const location=
+      props.location??null;
+
+    const status=
+      props.status||
+      'planned';
+
+    if(!action&&!date&&!time){
+      return false;
+    }
+
+    const duplicate=state.events.some(e=>
+      e.date===date&&
+      e.time===time&&
+      String(e.action||'').toLowerCase()===
+      String(action||'').toLowerCase()
+    );
+
+    if(duplicate){
+      return false;
+    }
+
+    state.events.unshift({
+      id:crypto.randomUUID(),
+      type:nodeType,
+      date,
+      time,
+      action,
+      people:[],
+      location,
+      status,
+      text:originalText,
+      created:new Date().toISOString(),
+      bridge:{
+        version:'0.1',
+        confidence:change.confidence
+      }
+    });
+
+    return true;
+  }
+
+  const node={
+    id:crypto.randomUUID(),
+    type:nodeType,
+    label:change.label||null,
+    properties:props,
+    created:new Date().toISOString(),
+    bridge:{
+      version:'0.1',
+      confidence:change.confidence
+    }
+  };
+
+  state.nodes.unshift(node);
+
+  return true;
+}
+
+function bridgePatchNode(change,originalText){
+  if(
+    !change.target_id||
+    change.requires_confirmation
+  ){
+    return false;
+  }
+
+  const found=findLifeNode(change.target_id);
+
+  if(!found){
+    return false;
+  }
+
+  const props=bridgeProperties(change);
+  const now=new Date().toISOString();
+
+  if(found.collection==='events'){
+    const existing=found.item;
+
+    const patched={
+      ...existing
+    };
+
+    if(
+      typeof change.node_type==='string'&&
+      change.node_type
+    ){
+      patched.type=change.node_type;
+    }
+
+    /*
+      Memory Repair:
+      ao contrário do antigo update,
+      a Bridge pode canonizar uma action malformada.
+    */
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'action'
+      )&&
+      typeof props.action==='string'&&
+      props.action.trim()
+    ){
+      patched.action=props.action.trim();
+
+    }else if(
+      typeof change.label==='string'&&
+      change.label.trim()&&
+      (
+        !existing.action||
+        existing.action===existing.text
+      )
+    ){
+      patched.action=change.label.trim();
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'date'
+      )
+    ){
+      patched.date=props.date;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'time'
+      )
+    ){
+      patched.time=props.time;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'location'
+      )
+    ){
+      patched.location=props.location;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'status'
+      )
+    ){
+      patched.status=props.status;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'people'
+      )&&
+      Array.isArray(props.people)
+    ){
+      patched.people=props.people;
+    }
+
+    patched.text=originalText;
+    patched.updated=now;
+
+    patched.bridge={
+      version:'0.1',
+      confidence:change.confidence
+    };
+
+    state.events[found.index]=patched;
+
+    state.events.unshift(
+      state.events.splice(found.index,1)[0]
+    );
+
+    return true;
+  }
+
+  const existing=found.item;
+
+  state.nodes[found.index]={
+    ...existing,
+    type:change.node_type||existing.type,
+    label:change.label||existing.label,
+    properties:{
+      ...(existing.properties||{}),
+      ...props
+    },
+    updated:now,
+    bridge:{
+      version:'0.1',
+      confidence:change.confidence
+    }
+  };
+
+  state.nodes.unshift(
+    state.nodes.splice(found.index,1)[0]
+  );
+
+  return true;
+}
+
+function bridgeMergeNodes(change,originalText){
+  if(
+    !change.target_id||
+    change.requires_confirmation
+  ){
+    return false;
+  }
+
+  const target=findLifeNode(change.target_id);
+
+  if(!target){
+    return false;
+  }
+
+  const relatedIds=Array.isArray(change.related_ids)
+    ?[
+      ...new Set(change.related_ids)
+    ].filter(
+      id=>
+        id&&
+        id!==change.target_id
+    )
+    :[];
+
+  if(!relatedIds.length){
+    return false;
+  }
+
+  const related=relatedIds
+    .map(id=>findLifeNode(id))
+    .filter(Boolean);
+
+  if(!related.length){
+    return false;
+  }
+
+  /*
+    Nesta Alpha, merge só ocorre entre
+    itens da mesma coleção.
+  */
+  if(
+    related.some(
+      x=>x.collection!==target.collection
+    )
+  ){
+    return false;
+  }
+
+  const props=bridgeProperties(change);
+  const now=new Date().toISOString();
+
+  if(target.collection==='events'){
+    const existing=target.item;
+
+    const merged={
+      ...existing
+    };
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'action'
+      )&&
+      typeof props.action==='string'&&
+      props.action.trim()
+    ){
+      merged.action=props.action.trim();
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'date'
+      )
+    ){
+      merged.date=props.date;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'time'
+      )
+    ){
+      merged.time=props.time;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'location'
+      )
+    ){
+      merged.location=props.location;
+    }
+
+    if(
+      Object.prototype.hasOwnProperty.call(
+        props,
+        'status'
+      )
+    ){
+      merged.status=props.status;
+    }
+
+    merged.text=originalText;
+    merged.updated=now;
+
+    merged.bridge={
+      version:'0.1',
+      confidence:change.confidence
+    };
+
+    const removeIds=new Set([
+      change.target_id,
+      ...relatedIds
+    ]);
+
+    state.events=state.events.filter(
+      e=>!removeIds.has(e.id)
+    );
+
+    state.events.unshift(merged);
+
+    return true;
+  }
+
+  const existing=target.item;
+
+  const merged={
+    ...existing,
+    type:change.node_type||existing.type,
+    label:change.label||existing.label,
+    properties:{
+      ...(existing.properties||{}),
+      ...props
+    },
+    updated:now,
+    bridge:{
+      version:'0.1',
+      confidence:change.confidence
+    }
+  };
+
+  const removeIds=new Set([
+    change.target_id,
+    ...relatedIds
+  ]);
+
+  state.nodes=state.nodes.filter(
+    n=>!removeIds.has(n.id)
+  );
+
+  state.nodes.unshift(merged);
+
+  /*
+    Relações que apontavam para nós absorvidos
+    passam a apontar para o nó canônico.
+  */
+  state.relations=state.relations.map(r=>({
+    ...r,
+    from_id:relatedIds.includes(r.from_id)
+      ?change.target_id
+      :r.from_id,
+    to_id:relatedIds.includes(r.to_id)
+      ?change.target_id
+      :r.to_id
+  }));
+
+  return true;
+}
+
+function bridgeCreateEdge(change){
+  if(change.requires_confirmation){
+    return false;
+  }
+
+  if(
+    !change.from_id||
+    !change.to_id||
+    !change.relation
+  ){
+    return false;
+  }
+
+  const from=findLifeNode(change.from_id);
+  const to=findLifeNode(change.to_id);
+
+  if(!from||!to){
+    return false;
+  }
+
+  const duplicate=state.relations.some(r=>
+    r.from_id===change.from_id&&
+    r.to_id===change.to_id&&
+    r.relation===change.relation
+  );
+
+  if(duplicate){
+    return false;
+  }
+
+  state.relations.unshift({
+    id:crypto.randomUUID(),
+    from_id:change.from_id,
+    relation:change.relation,
+    to_id:change.to_id,
+    created:new Date().toISOString(),
+    confidence:change.confidence
+  });
+
+  return true;
+}
+
+function bridgeRemoveEdge(change){
+  if(change.requires_confirmation){
+    return false;
+  }
+
+  if(
+    !change.from_id||
+    !change.to_id||
+    !change.relation
+  ){
+    return false;
+  }
+
+  const before=state.relations.length;
+
+  state.relations=state.relations.filter(r=>
+    !(
+      r.from_id===change.from_id&&
+      r.to_id===change.to_id&&
+      r.relation===change.relation
+    )
+  );
+
+  return state.relations.length<before;
+}
+
+function applyBridge(data,originalText){
+  const changes=Array.isArray(data?.changes)
+    ?data.changes
+    :[];
+
+  if(!changes.length){
+    return {
+      received:0,
+      applied:0
+    };
+  }
+
+  let applied=0;
+
+  for(const change of changes){
+    if(!change||typeof change.op!=='string'){
+      continue;
+    }
+
+    let ok=false;
+
+    if(change.op==='node.create'){
+      ok=bridgeCreateNode(
+        change,
+        originalText
+      );
+    }
+
+    if(change.op==='node.patch'){
+      ok=bridgePatchNode(
+        change,
+        originalText
+      );
+    }
+
+    if(change.op==='node.merge'){
+      ok=bridgeMergeNodes(
+        change,
+        originalText
+      );
+    }
+
+    if(change.op==='edge.create'){
+      ok=bridgeCreateEdge(change);
+    }
+
+    if(change.op==='edge.remove'){
+      ok=bridgeRemoveEdge(change);
+    }
+
+    if(ok){
+      applied++;
+    }
+  }
+
+  return {
+    received:changes.length,
+    applied
+  };
+}
+
+
+/* =========================================================
+   LEGACY UNDERSTANDING
+   Mantido temporariamente como fallback.
+   ========================================================= */
 
 function applyUnderstanding(data,originalText){
   const u=data?.understanding;
@@ -133,7 +804,10 @@ function applyUnderstanding(data,originalText){
       state.events.some(e=>e.id===id)
     );
 
-    if(targetIndex!==-1&&validRelatedIds.length){
+    if(
+      targetIndex!==-1&&
+      validRelatedIds.length
+    ){
       const existing=state.events[targetIndex];
 
       const merged={
@@ -142,9 +816,11 @@ function applyUnderstanding(data,originalText){
         date:u.date??existing.date,
         time:u.time??existing.time,
         action:existing.action||u.action,
-        people:Array.isArray(u.people)&&u.people.length
-          ?u.people
-          :(existing.people||[]),
+        people:
+          Array.isArray(u.people)&&
+          u.people.length
+            ?u.people
+            :(existing.people||[]),
         location:u.location??existing.location,
         status:u.status||existing.status||'planned',
         text:originalText,
@@ -174,9 +850,11 @@ function applyUnderstanding(data,originalText){
         date:u.date??existing.date,
         time:u.time??existing.time,
         action:existing.action||u.action,
-        people:Array.isArray(u.people)&&u.people.length
-          ?u.people
-          :(existing.people||[]),
+        people:
+          Array.isArray(u.people)&&
+          u.people.length
+            ?u.people
+            :(existing.people||[]),
         location:u.location??existing.location,
         status:u.status||existing.status||'planned',
         text:originalText,
@@ -222,6 +900,30 @@ function applyUnderstanding(data,originalText){
   }
 }
 
+function applySnowyResult(data,originalText){
+  const bridge=applyBridge(
+    data,
+    originalText
+  );
+
+  /*
+    Se o Core 0.6 enviou mudanças,
+    não repetimos a mesma mutação
+    pelo protocolo antigo.
+
+    Se não enviou mudanças,
+    o sistema antigo continua funcionando.
+  */
+  if(bridge.received===0){
+    applyUnderstanding(
+      data,
+      originalText
+    );
+  }
+
+  return bridge;
+}
+
 function nav(){
   return `<div class="nav"><div class="nav-inner">${
     [
@@ -257,6 +959,7 @@ function eventStatus(e){
   }
 
   const now=new Date();
+
   const today=[
     now.getFullYear(),
     String(now.getMonth()+1).padStart(2,'0'),
@@ -276,7 +979,8 @@ function eventStatus(e){
   }
 
   const currentTime=
-    String(now.getHours()).padStart(2,'0')+':'+
+    String(now.getHours()).padStart(2,'0')+
+    ':'+
     String(now.getMinutes()).padStart(2,'0');
 
   return e.time<currentTime
@@ -339,11 +1043,29 @@ function render(){
         <div class="snow">
           <img src="apple-touch-icon.png" alt="Snowy">
         </div>
-        <div class="brand">SNOWY</div>
-        <h1 class="tag">Sua segunda pele.</h1>
-        <p class="sub">Uma camada inteligente entre você e você mesmo.</p>
-        <button class="primary" id="meet">Conhecer minha Snowy</button>
-        <p class="tiny">Alpha 0.1 · User 0001</p>
+
+        <div class="brand">
+          SNOWY
+        </div>
+
+        <h1 class="tag">
+          Sua segunda pele.
+        </h1>
+
+        <p class="sub">
+          Uma camada inteligente entre você e você mesmo.
+        </p>
+
+        <button
+          class="primary"
+          id="meet"
+        >
+          Conhecer minha Snowy
+        </button>
+
+        <p class="tiny">
+          Alpha 0.1 · User 0001
+        </p>
       </section>
     `;
 
@@ -380,7 +1102,10 @@ function render(){
           </strong>
         </p>
 
-        <button class="primary" id="start">
+        <button
+          class="primary"
+          id="start"
+        >
           Vamos começar
         </button>
       </section>
@@ -397,7 +1122,9 @@ function render(){
   if(view==='question'){
     app.innerHTML=`
       <section class="shell center onboard">
-        <div class="eyebrow">NOSSO PRIMEIRO PASSO</div>
+        <div class="eyebrow">
+          NOSSO PRIMEIRO PASSO
+        </div>
 
         <h1>
           Qual é a primeira coisa que você gostaria
@@ -413,21 +1140,35 @@ function render(){
           placeholder="Escreva naturalmente..."
         ></textarea>
 
-        <button class="primary" id="continue">
+        <button
+          class="primary"
+          id="continue"
+        >
           Continuar
         </button>
       </section>
     `;
 
     document.querySelector('#continue').onclick=()=>{
-      const x=document.querySelector('#focus').value.trim();
+      const x=document
+        .querySelector('#focus')
+        .value
+        .trim();
 
       if(!x)return;
 
       state.focus=x;
 
-      remember(x,'goal',.95);
-      learnDNA('Prioridade inicial: '+x,.9);
+      remember(
+        x,
+        'goal',
+        .95
+      );
+
+      learnDNA(
+        'Prioridade inicial: '+x,
+        .9
+      );
 
       save();
 
@@ -441,7 +1182,9 @@ function render(){
   if(view==='confirm'){
     app.innerHTML=`
       <section class="shell center">
-        <div class="snow">🧬</div>
+        <div class="snow">
+          🧬
+        </div>
 
         <h1>
           Seu Snowy DNA começou.
@@ -452,7 +1195,9 @@ function render(){
         </p>
 
         <div class="card">
-          <strong>${esc(state.focus)}</strong>
+          <strong>
+            ${esc(state.focus)}
+          </strong>
         </div>
 
         <p class="sub">
@@ -466,7 +1211,10 @@ function render(){
           Assim como a sua Snowy.
         </h2>
 
-        <button class="primary" id="finish">
+        <button
+          class="primary"
+          id="finish"
+        >
           Entrar na minha Snowy
         </button>
       </section>
@@ -519,11 +1267,17 @@ function home(){
         Está tudo tranquilo por aqui.
       </p>
 
-      <button class="primary" data-view="chat">
+      <button
+        class="primary"
+        data-view="chat"
+      >
         🎙️ Falar com a Snowy
       </button>
 
-      <p class="muted" style="text-align:center;margin-top:18px">
+      <p
+        class="muted"
+        style="text-align:center;margin-top:18px"
+      >
         ou escreva para mim...
       </p>
     </div>
@@ -532,9 +1286,14 @@ function home(){
 
 function chat(){
   return `
-    <h1 class="home-title">Conversar</h1>
+    <h1 class="home-title">
+      Conversar
+    </h1>
 
-    <div class="chat" id="messages">
+    <div
+      class="chat"
+      id="messages"
+    >
       ${
         state.messages
           .map(m=>
@@ -561,7 +1320,10 @@ function chat(){
         🎙️
       </button>
 
-      <button class="send" id="send">
+      <button
+        class="send"
+        id="send"
+      >
         ↑
       </button>
     </div>
@@ -584,10 +1346,15 @@ function dna(){
         state.dna.length
           ?state.dna.map(x=>`
             <div class="item">
-              <strong>${esc(x.text)}</strong><br>
+              <strong>
+                ${esc(x.text)}
+              </strong>
+              <br>
+
               <span class="pill">
                 ${Math.round(x.confidence*100)}% confiança
               </span>
+
               <span class="pill">
                 ${x.status}
               </span>
@@ -598,13 +1365,18 @@ function dna(){
     </div>
 
     <div class="card">
-      <div class="eyebrow">MEMÓRIA</div>
+      <div class="eyebrow">
+        MEMÓRIA
+      </div>
 
       <p>
         ${state.memories.length} registros locais nesta Alpha.
       </p>
 
-      <button class="secondary" id="clearMemory">
+      <button
+        class="secondary"
+        id="clearMemory"
+      >
         Apagar dados locais da Alpha
       </button>
     </div>
@@ -624,7 +1396,9 @@ function life(){
       'cancelled',
       'did_not_happen',
       'unknown'
-    ].includes(eventStatus(e))
+    ].includes(
+      eventStatus(e)
+    )
   );
 
   const genesis=events.filter(e=>
@@ -647,7 +1421,10 @@ function life(){
 
       <p>
         <strong>
-          ${esc(state.focus||'Ainda não definida')}
+          ${esc(
+            state.focus||
+            'Ainda não definida'
+          )}
         </strong>
       </p>
     </div>
@@ -659,9 +1436,12 @@ function life(){
 
       ${
         current.length
-          ?current.slice(0,10).map(e=>
-            eventCard(e,false)
-          ).join('')
+          ?current
+            .slice(0,10)
+            .map(e=>
+              eventCard(e,false)
+            )
+            .join('')
           :'<p class="muted">Nenhum compromisso futuro registrado.</p>'
       }
     </div>
@@ -677,9 +1457,12 @@ function life(){
 
       ${
         archive.length
-          ?archive.slice(0,20).map(e=>
-            eventCard(e,true)
-          ).join('')
+          ?archive
+            .slice(0,20)
+            .map(e=>
+              eventCard(e,true)
+            )
+            .join('')
           :'<p class="muted">Seu Life Archive ainda está começando.</p>'
       }
     </div>
@@ -695,9 +1478,12 @@ function life(){
 
       ${
         genesis.length
-          ?genesis.slice(0,20).map(e=>
-            eventCard(e,true)
-          ).join('')
+          ?genesis
+            .slice(0,20)
+            .map(e=>
+              eventCard(e,true)
+            )
+            .join('')
           :'<p class="muted">Nenhum registro Genesis por enquanto.</p>'
       }
     </div>
@@ -713,6 +1499,7 @@ function life(){
             <div class="item">
               👁️ ${esc(x.text)}
               <br>
+
               <span class="pill">
                 ${x.status}
               </span>
@@ -725,12 +1512,14 @@ function life(){
 }
 
 function bind(){
-  document.querySelectorAll('[data-view]').forEach(b=>{
-    b.onclick=()=>{
-      view=b.dataset.view;
-      render();
-    };
-  });
+  document
+    .querySelectorAll('[data-view]')
+    .forEach(b=>{
+      b.onclick=()=>{
+        view=b.dataset.view;
+        render();
+      };
+    });
 
   const send=document.querySelector('#send');
 
@@ -760,7 +1549,15 @@ function bind(){
       try{
         const data=await askSnowyCore(text);
 
-        applyUnderstanding(data,text);
+        const bridge=applySnowyResult(
+          data,
+          text
+        );
+
+        console.log(
+          'Snowy Bridge:',
+          bridge
+        );
 
         state.messages.push({
           role:'snowy',
@@ -768,7 +1565,10 @@ function bind(){
         });
 
       }catch(error){
-        console.error('Snowy Core:',error);
+        console.error(
+          'Snowy Core:',
+          error
+        );
 
         state.messages.push({
           role:'snowy',
@@ -783,7 +1583,8 @@ function bind(){
       render();
 
       setTimeout(()=>{
-        document.querySelector('#messages')
+        document
+          .querySelector('#messages')
           ?.lastElementChild
           ?.scrollIntoView({
             behavior:'smooth'
@@ -795,12 +1596,17 @@ function bind(){
       go();
     };
 
-    document.querySelector('#msg').onkeydown=e=>{
-      if(e.key==='Enter'&&!e.shiftKey){
-        e.preventDefault();
-        go();
-      }
-    };
+    document
+      .querySelector('#msg')
+      .onkeydown=e=>{
+        if(
+          e.key==='Enter'&&
+          !e.shiftKey
+        ){
+          e.preventDefault();
+          go();
+        }
+      };
   }
 
   const msg=document.querySelector('#msg');
@@ -808,11 +1614,18 @@ function bind(){
   if(msg){
     const grow=()=>{
       msg.style.height='auto';
+
       msg.style.height=
-        Math.min(msg.scrollHeight,180)+'px';
+        Math.min(
+          msg.scrollHeight,
+          180
+        )+'px';
     };
 
-    msg.addEventListener('input',grow);
+    msg.addEventListener(
+      'input',
+      grow
+    );
 
     grow();
   }
@@ -937,12 +1750,24 @@ function bind(){
 
   if(cm){
     cm.onclick=()=>{
-      if(confirm(
-        'Apagar todos os dados locais desta Alpha?'
-      )){
+      if(
+        confirm(
+          'Apagar todos os dados locais desta Alpha?'
+        )
+      ){
         localStorage.removeItem(KEY);
 
-        state={...initial};
+        state={
+          ...initial,
+          memories:[],
+          dna:[],
+          watches:[],
+          events:[],
+          nodes:[],
+          relations:[],
+          messages:[],
+          feedback:[]
+        };
 
         view='welcome';
 
