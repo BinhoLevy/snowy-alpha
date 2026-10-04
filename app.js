@@ -1408,129 +1408,91 @@ function dna(){
 }
 
 function life(){
-  const events=state.events||[];
-
-  const current=events.filter(e=>
-    eventStatus(e)==='planned'
-  );
-
-  const archive=events.filter(e=>
-    [
-      'completed',
-      'cancelled',
-      'did_not_happen',
-      'unknown'
-    ].includes(
-      eventStatus(e)
-    )
-  );
-
-  const genesis=events.filter(e=>
-    eventStatus(e)==='genesis'
-  );
-
   return `
-    <h1 class="home-title">
-      ◎ Minha Vida
-    </h1>
+    <div class="netlife">
+      <div class="netlife-head">
+        <div class="netlife-brand">SNOWY</div>
 
-    <p class="muted">
-      Primeira representação do seu Life Map.
-    </p>
+        <h1 class="netlife-title">
+          <span>Snowy</span> NetLife
+        </h1>
 
-    <div class="card">
-      <div class="eyebrow">
-        PRIORIDADE INICIAL
+        <p class="netlife-subtitle">
+          Sua vida conectada.
+        </p>
       </div>
 
-      <p>
-        <strong>
-          ${esc(
-            state.focus||
-            'Ainda não definida'
-          )}
-        </strong>
-      </p>
-    </div>
+      <div class="netlife-worlds">
 
-    <div class="card">
-      <div class="eyebrow">
-        AGORA E FUTURO
+        <button
+          class="netlife-world"
+          data-netlife="future"
+          aria-label="Future"
+        >
+          <span class="netlife-sphere sphere-future">
+            <span class="netlife-orbit orbit-a"></span>
+            <span class="netlife-orbit orbit-b"></span>
+            <span class="netlife-orbit orbit-c"></span>
+
+            <i class="node n1"></i>
+            <i class="node n2"></i>
+            <i class="node n3"></i>
+            <i class="node n4"></i>
+            <i class="node n5"></i>
+          </span>
+
+          <span class="netlife-label">
+            FUTURE
+          </span>
+        </button>
+
+
+        <button
+          class="netlife-world"
+          data-netlife="archive"
+          aria-label="Life Archive"
+        >
+          <span class="netlife-sphere sphere-archive">
+            <span class="netlife-orbit orbit-a"></span>
+            <span class="netlife-orbit orbit-b"></span>
+            <span class="netlife-orbit orbit-c"></span>
+
+            <i class="node n1"></i>
+            <i class="node n2"></i>
+            <i class="node n3"></i>
+            <i class="node n4"></i>
+            <i class="node n5"></i>
+          </span>
+
+          <span class="netlife-label">
+            LIFE ARCHIVE
+          </span>
+        </button>
+
+
+        <button
+          class="netlife-world"
+          data-netlife="genesis"
+          aria-label="Genesis"
+        >
+          <span class="netlife-sphere sphere-genesis">
+            <span class="netlife-orbit orbit-a"></span>
+            <span class="netlife-orbit orbit-b"></span>
+            <span class="netlife-orbit orbit-c"></span>
+
+            <i class="node n1"></i>
+            <i class="node n2"></i>
+            <i class="node n3"></i>
+            <i class="node n4"></i>
+            <i class="node n5"></i>
+          </span>
+
+          <span class="netlife-label">
+            GENESIS
+          </span>
+        </button>
+
       </div>
-
-      ${
-        current.length
-          ?current
-            .slice(0,10)
-            .map(e=>
-              eventCard(e,false)
-            )
-            .join('')
-          :'<p class="muted">Nenhum compromisso futuro registrado.</p>'
-      }
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">
-        LIFE ARCHIVE · PASSADO
-      </div>
-
-      <p class="muted">
-        O que já passou continua fazendo parte da sua história.
-      </p>
-
-      ${
-        archive.length
-          ?archive
-            .slice(0,20)
-            .map(e=>
-              eventCard(e,true)
-            )
-            .join('')
-          :'<p class="muted">Seu Life Archive ainda está começando.</p>'
-      }
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">
-        SNOWY GENESIS · USER 0001
-      </div>
-
-      <p class="muted">
-        Testes e momentos da história de como sua Snowy começou.
-      </p>
-
-      ${
-        genesis.length
-          ?genesis
-            .slice(0,20)
-            .map(e=>
-              eventCard(e,true)
-            )
-            .join('')
-          :'<p class="muted">Nenhum registro Genesis por enquanto.</p>'
-      }
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">
-        SNOWY WATCH
-      </div>
-
-      ${
-        state.watches.length
-          ?state.watches.map(x=>`
-            <div class="item">
-              👁️ ${esc(x.text)}
-              <br>
-
-              <span class="pill">
-                ${x.status}
-              </span>
-            </div>
-          `).join('')
-          :'<p class="muted">Nada em acompanhamento.</p>'
-      }
     </div>
   `;
 }
