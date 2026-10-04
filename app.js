@@ -899,8 +899,7 @@ function applyUnderstanding(data,originalText){
     learnDNA(u.action,.8);
   }
 }
-  }
-}
+
 function applySnowyResult(data,originalText){
   const bridge=applyBridge(
     data,
