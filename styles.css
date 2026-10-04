@@ -1,4 +1,266 @@
-:root{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:#111827;background:#f7f8fb;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(180deg,#fff 0,#f4f6fa 100%)}button,input,textarea{font:inherit}.shell{max-width:520px;margin:0 auto;min-height:100vh;padding:env(safe-area-inset-top) 18px calc(86px + env(safe-area-inset-bottom))}.center{min-height:90vh;display:flex;flex-direction:column;justify-content:center;text-align:center}.snow{font-size:54px}.brand{letter-spacing:.18em;font-size:14px;font-weight:800;margin-top:10px}.tag{font-size:30px;line-height:1.08;margin:14px 0 8px}.sub{color:#667085;line-height:1.5}.primary,.secondary{border:0;border-radius:16px;padding:15px 18px;font-weight:700;width:100%;margin-top:12px}.primary{background:#111827;color:white}.secondary{background:#e9edf4;color:#111827}.card{background:rgba(255,255,255,.9);border:1px solid #e5e7eb;border-radius:22px;padding:18px;margin:12px 0;box-shadow:0 8px 30px rgba(17,24,39,.05)}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#667085}.home-title{font-size:30px;margin:18px 0 6px}.calm{font-size:19px;font-weight:700}.muted{color:#667085}.chat{display:flex;flex-direction:column;gap:10px;margin:14px 0 100px}.bubble{max-width:88%;padding:12px 14px;border-radius:18px;line-height:1.42;white-space:pre-wrap}.user{align-self:flex-end;background:#111827;color:#fff;border-bottom-right-radius:6px}.snowy{align-self:flex-start;background:#fff;border:1px solid #e5e7eb;border-bottom-left-radius:6px}.composer{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(62px + env(safe-area-inset-bottom));width:min(484px,calc(100% - 28px));display:flex;gap:8px;background:#fff;padding:8px;border:1px solid #e5e7eb;border-radius:18px;box-shadow:0 8px 30px rgba(17,24,39,.12)}.composer input{flex:1;border:0;outline:0;padding:10px}.send{width:42px;height:42px;border:0;border-radius:14px;background:#111827;color:#fff}.nav{position:fixed;bottom:0;left:0;right:0;height:calc(58px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid #e5e7eb;display:flex;justify-content:center}.nav-inner{width:min(520px,100%);display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;font-size:11px;color:#667085}.nav button.active{color:#111827;font-weight:800}.list{display:flex;flex-direction:column;gap:10px}.item{padding:14px;border:1px solid #e5e7eb;border-radius:16px;background:#fff}.pill{display:inline-block;font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:#eef2f7;margin-right:6px}.onboard textarea{width:100%;min-height:140px;border:1px solid #d9dee8;border-radius:18px;padding:16px;outline:none;resize:none;background:white}.tiny{font-size:12px;color:#98a2b3}.lab{margin-top:24px;border-top:1px dashed #d0d5dd;padding-top:16px}.feedback{display:flex;gap:8px}.feedback button{flex:1;border:1px solid #e5e7eb;background:white;border-radius:12px;padding:10px}
+:root{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  color:#111827;
+  background:#f7f8fb;
+  font-synthesis:none;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(180deg,#fff 0,#f4f6fa 100%);
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+.shell{
+  max-width:520px;
+  margin:0 auto;
+  min-height:100vh;
+  padding:env(safe-area-inset-top) 18px calc(86px + env(safe-area-inset-bottom));
+}
+
+.center{
+  min-height:90vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+}
+
+.snow{
+  font-size:54px;
+}
+
+.brand{
+  letter-spacing:.18em;
+  font-size:14px;
+  font-weight:800;
+  margin-top:10px;
+}
+
+.tag{
+  font-size:30px;
+  line-height:1.08;
+  margin:14px 0 8px;
+}
+
+.sub{
+  color:#667085;
+  line-height:1.5;
+}
+
+.primary,
+.secondary{
+  border:0;
+  border-radius:16px;
+  padding:15px 18px;
+  font-weight:700;
+  width:100%;
+  margin-top:12px;
+}
+
+.primary{
+  background:#111827;
+  color:white;
+}
+
+.secondary{
+  background:#e9edf4;
+  color:#111827;
+}
+
+.card{
+  background:rgba(255,255,255,.9);
+  border:1px solid #e5e7eb;
+  border-radius:22px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:0 8px 30px rgba(17,24,39,.05);
+}
+
+.eyebrow{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:#667085;
+}
+
+.home-title{
+  font-size:30px;
+  margin:18px 0 6px;
+}
+
+.calm{
+  font-size:19px;
+  font-weight:700;
+}
+
+.muted{
+  color:#667085;
+}
+
+.chat{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin:14px 0 100px;
+}
+
+.bubble{
+  max-width:88%;
+  padding:12px 14px;
+  border-radius:18px;
+  line-height:1.42;
+  white-space:pre-wrap;
+}
+
+.user{
+  align-self:flex-end;
+  background:#111827;
+  color:#fff;
+  border-bottom-right-radius:6px;
+}
+
+.snowy{
+  align-self:flex-start;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-bottom-left-radius:6px;
+}
+
+.composer{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:calc(62px + env(safe-area-inset-bottom));
+  width:min(484px,calc(100% - 28px));
+  display:flex;
+  gap:8px;
+  background:#fff;
+  padding:8px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  box-shadow:0 8px 30px rgba(17,24,39,.12);
+}
+
+.composer input{
+  flex:1;
+  border:0;
+  outline:0;
+  padding:10px;
+}
+
+.send{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:14px;
+  background:#111827;
+  color:#fff;
+}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:calc(58px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);
+  border-top:1px solid #e5e7eb;
+  display:flex;
+  justify-content:center;
+}
+
+.nav-inner{
+  width:min(520px,100%);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+}
+
+.nav button{
+  border:0;
+  background:transparent;
+  font-size:11px;
+  color:#667085;
+}
+
+.nav button.active{
+  color:#111827;
+  font-weight:800;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.item{
+  padding:14px;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  background:#fff;
+}
+
+.pill{
+  display:inline-block;
+  font-size:11px;
+  font-weight:800;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#eef2f7;
+  margin-right:6px;
+}
+
+.onboard textarea{
+  width:100%;
+  min-height:140px;
+  border:1px solid #d9dee8;
+  border-radius:18px;
+  padding:16px;
+  outline:none;
+  resize:none;
+  background:white;
+}
+
+.tiny{
+  font-size:12px;
+  color:#98a2b3;
+}
+
+.lab{
+  margin-top:24px;
+  border-top:1px dashed #d0d5dd;
+  padding-top:16px;
+}
+
+.feedback{
+  display:flex;
+  gap:8px;
+}
+
+.feedback button{
+  flex:1;
+  border:1px solid #e5e7eb;
+  background:white;
+  border-radius:12px;
+  padding:10px;
+}
+
+
+/* =========================================================
+   SNOWY LOGO
+   ========================================================= */
+
 .snow{
   background:transparent !important;
   box-shadow:none !important;
@@ -18,7 +280,13 @@
   box-shadow:none !important;
   background:transparent !important;
 }
-  .mic{
+
+
+/* =========================================================
+   MICROFONE
+   ========================================================= */
+
+.mic{
   background:transparent !important;
   border:none !important;
   box-shadow:none !important;
@@ -28,16 +296,26 @@
   font-size:30px !important;
   line-height:1 !important;
 }
-  .mic[style*="red"]{
+
+.mic[style*="red"]{
   animation:snowyPulse 1s ease-in-out infinite;
 }
 
-  @keyframes snowyPulse{
-  0%,100%{transform:scale(1);opacity:1}
-  50%{transform:scale(1.25);opacity:.55}
+@keyframes snowyPulse{
+  0%,100%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(1.25);
+    opacity:.55;
+  }
 }
+
+
 /* =========================================================
-   SNOWY NETLIFE 0.1
+   SNOWY NETLIFE 0.3
    Sua vida conectada.
    ========================================================= */
 
@@ -55,11 +333,7 @@
 }
 
 .netlife-brand{
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.34em;
-  color:#98a2b3;
-  margin-bottom:18px;
+  display:none;
 }
 
 .netlife-title{
@@ -83,7 +357,9 @@
 }
 
 
-/* área dos três mundos */
+/* =========================================================
+   ÁREA DOS TRÊS MUNDOS
+   ========================================================= */
 
 .netlife-worlds{
   flex:1;
@@ -91,16 +367,14 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:22px;
+  gap:20px;
   padding-bottom:40px;
 }
-
-
-/* cada mundo */
 
 .netlife-world{
   appearance:none;
   -webkit-appearance:none;
+  position:relative;
   border:0;
   background:transparent;
   padding:0;
@@ -113,182 +387,579 @@
 }
 
 
-/* esfera */
+/* =========================================================
+   ESFERA BASE
+   ========================================================= */
 
 .netlife-sphere{
   position:relative;
   display:block;
-  width:88px;
-  height:88px;
+  width:92px;
+  height:92px;
   border-radius:50%;
+  overflow:visible;
 
-  border:1px solid rgba(17,24,39,.32);
+  border:1px solid rgba(17,24,39,.28);
 
   background:
     radial-gradient(
-      circle at 42% 38%,
-      rgba(255,255,255,.98) 0%,
-      rgba(247,248,250,.82) 36%,
-      rgba(209,213,219,.24) 70%,
-      rgba(17,24,39,.07) 100%
+      circle at 67% 31%,
+      rgba(255,255,255,1) 0 1.5%,
+      rgba(255,255,255,0) 8%
+    ),
+    radial-gradient(
+      circle at 34% 65%,
+      rgba(255,255,255,.92) 0 1.5%,
+      rgba(255,255,255,0) 9%
+    ),
+    radial-gradient(
+      circle at 47% 46%,
+      rgba(255,255,255,.86) 0%,
+      rgba(246,247,249,.55) 42%,
+      rgba(209,213,219,.17) 72%,
+      rgba(17,24,39,.035) 100%
     );
 
   box-shadow:
-    inset -9px -8px 18px rgba(17,24,39,.06),
-    inset 7px 5px 15px rgba(255,255,255,.9),
-    0 16px 18px rgba(17,24,39,.10);
-
-  overflow:hidden;
+    inset 8px 7px 17px rgba(255,255,255,.95),
+    inset -9px -8px 18px rgba(17,24,39,.055);
 
   animation:
-    netlifeFloat 5s ease-in-out infinite,
-    netlifeBreathe 7s ease-in-out infinite;
+    netlifeFloat 7s ease-in-out infinite,
+    netlifeLife 10s ease-in-out infinite;
 
   transition:
-    transform .45s cubic-bezier(.2,.8,.2,1),
-    filter .45s ease,
-    box-shadow .45s ease;
+    transform .5s cubic-bezier(.2,.8,.2,1),
+    filter .5s ease,
+    box-shadow .5s ease;
 }
 
 
-/* pequenas diferenças para não parecerem clones */
+/* =========================================================
+   SOMBRA FLUTUANTE
+   ========================================================= */
 
-.sphere-archive{
-  animation-delay:-1.7s;
+.netlife-sphere::after{
+  content:"";
+  position:absolute;
+  left:14%;
+  right:14%;
+  bottom:-26px;
+  height:9px;
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(17,24,39,.19) 0%,
+      rgba(17,24,39,.10) 34%,
+      rgba(17,24,39,.035) 58%,
+      rgba(17,24,39,0) 78%
+    );
+
+  filter:blur(4px);
+
+  transform:scaleX(1.08);
+
+  animation:netlifeShadow 7s ease-in-out infinite;
+
+  pointer-events:none;
 }
 
-.sphere-genesis{
-  animation-delay:-3.1s;
+
+/* =========================================================
+   BRILHO INTERNO
+   ========================================================= */
+
+.netlife-sphere::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+
+  width:18px;
+  height:18px;
+
+  left:41%;
+  top:42%;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,255,.86) 15%,
+      rgba(255,255,255,.35) 38%,
+      rgba(255,255,255,0) 72%
+    );
+
+  opacity:.68;
+
+  filter:blur(.25px);
+
+  animation:netlifeGlow 6s ease-in-out infinite;
+
+  pointer-events:none;
 }
 
 
-/* linhas internas da teia */
+/* =========================================================
+   TEIA INTERNA ATUAL
+   Esta camada será substituída pelas malhas SVG.
+   ========================================================= */
 
 .netlife-orbit{
   position:absolute;
+  z-index:1;
+
   left:50%;
   top:50%;
-  width:112%;
+
+  width:116%;
   height:44%;
-  border:1px solid rgba(17,24,39,.20);
+
+  border:.65px solid rgba(17,24,39,.18);
+
   border-radius:50%;
+
   transform-origin:center;
+
+  box-shadow:0 0 1px rgba(17,24,39,.07);
 }
 
 .orbit-a{
   transform:
     translate(-50%,-50%)
     rotate(18deg);
+
+  opacity:.88;
 }
 
 .orbit-b{
   transform:
     translate(-50%,-50%)
     rotate(76deg);
+
+  opacity:.58;
 }
 
 .orbit-c{
   transform:
     translate(-50%,-50%)
     rotate(132deg);
+
+  opacity:.42;
 }
 
 
-/* nós */
+/* =========================================================
+   FUTURE
+   Aberto, leve, respirando.
+   ========================================================= */
+
+.sphere-future{
+  background:
+    radial-gradient(
+      circle at 68% 33%,
+      rgba(255,255,255,1) 0 2%,
+      rgba(255,255,255,0) 9%
+    ),
+
+    radial-gradient(
+      circle at 36% 61%,
+      rgba(255,255,255,.94) 0 2%,
+      rgba(255,255,255,0) 10%
+    ),
+
+    radial-gradient(
+      circle at center,
+      rgba(255,255,255,.76),
+      rgba(229,231,235,.15) 62%,
+      rgba(17,24,39,.025) 100%
+    );
+}
+
+.sphere-future .orbit-a{
+  width:119%;
+  height:41%;
+}
+
+.sphere-future .orbit-b{
+  width:105%;
+  height:54%;
+}
+
+.sphere-future .orbit-c{
+  width:121%;
+  height:30%;
+}
+
+
+/* =========================================================
+   LIFE ARCHIVE
+   Muito mais denso.
+   ========================================================= */
+
+.sphere-archive{
+  border-color:rgba(17,24,39,.34);
+
+  background:
+
+    radial-gradient(
+      circle at 49% 50%,
+      rgba(17,24,39,.12) 0 2%,
+      rgba(17,24,39,.05) 18%,
+      rgba(255,255,255,0) 37%
+    ),
+
+    repeating-radial-gradient(
+      ellipse at 49% 49%,
+      rgba(17,24,39,.052) 0 1px,
+      rgba(255,255,255,0) 1px 5px
+    ),
+
+    radial-gradient(
+      circle at 33% 35%,
+      rgba(255,255,255,.94) 0 2%,
+      rgba(255,255,255,0) 9%
+    ),
+
+    radial-gradient(
+      circle at 69% 63%,
+      rgba(255,255,255,.91) 0 2%,
+      rgba(255,255,255,0) 10%
+    ),
+
+    radial-gradient(
+      circle at center,
+      rgba(209,213,219,.29) 0%,
+      rgba(229,231,235,.19) 43%,
+      rgba(17,24,39,.045) 100%
+    );
+
+  box-shadow:
+    inset 9px 7px 18px rgba(255,255,255,.91),
+    inset -8px -7px 20px rgba(17,24,39,.09);
+}
+
+.sphere-archive::before{
+  width:25px;
+  height:25px;
+
+  left:36%;
+  top:36%;
+
+  opacity:.63;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,255,.68) 18%,
+      rgba(17,24,39,.075) 35%,
+      rgba(255,255,255,0) 73%
+    );
+}
+
+.sphere-archive .orbit-a{
+  width:124%;
+  height:63%;
+  opacity:.34;
+}
+
+.sphere-archive .orbit-b{
+  width:123%;
+  height:39%;
+  opacity:.48;
+}
+
+.sphere-archive .orbit-c{
+  width:108%;
+  height:72%;
+  opacity:.28;
+}
+
+
+/* =========================================================
+   GENESIS
+   Estrutural, alguns nós mais fortes.
+   ========================================================= */
+
+.sphere-genesis{
+  background:
+
+    radial-gradient(
+      circle at 59% 37%,
+      rgba(255,255,255,1) 0 2%,
+      rgba(255,255,255,0) 9%
+    ),
+
+    radial-gradient(
+      circle at 31% 64%,
+      rgba(255,255,255,.88) 0 2%,
+      rgba(255,255,255,0) 10%
+    ),
+
+    radial-gradient(
+      circle at center,
+      rgba(255,255,255,.68),
+      rgba(209,213,219,.20) 65%,
+      rgba(17,24,39,.035) 100%
+    );
+}
+
+.sphere-genesis .orbit-a{
+  width:120%;
+  height:48%;
+  opacity:.72;
+}
+
+.sphere-genesis .orbit-b{
+  width:111%;
+  height:60%;
+  opacity:.50;
+}
+
+.sphere-genesis .orbit-c{
+  width:120%;
+  height:31%;
+  opacity:.62;
+}
+
+
+/* =========================================================
+   NÓS
+   ========================================================= */
 
 .netlife-sphere .node{
   position:absolute;
+  z-index:4;
+
   display:block;
+
   width:4px;
   height:4px;
+
   border-radius:50%;
-  background:#4b5563;
-  box-shadow:0 0 5px rgba(17,24,39,.25);
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #6b7280,
+      #111827 72%
+    );
+
+  box-shadow:
+    0 0 1px rgba(17,24,39,.75),
+    0 0 5px rgba(17,24,39,.13);
 }
 
 .netlife-sphere .n1{
-  left:19%;
+  left:18%;
   top:31%;
 }
 
 .netlife-sphere .n2{
   left:66%;
-  top:18%;
+  top:16%;
+  width:3px;
+  height:3px;
 }
 
 .netlife-sphere .n3{
-  left:72%;
-  top:63%;
+  left:73%;
+  top:64%;
 }
 
 .netlife-sphere .n4{
   left:34%;
-  top:72%;
+  top:73%;
+  width:3px;
+  height:3px;
 }
 
 .netlife-sphere .n5{
-  left:48%;
+  left:47%;
   top:45%;
-  width:6px;
-  height:6px;
+  width:7px;
+  height:7px;
   background:#111827;
+
+  box-shadow:
+    0 0 0 1px rgba(17,24,39,.12),
+    0 0 8px rgba(17,24,39,.13);
+}
+
+.sphere-genesis .n1,
+.sphere-genesis .n3{
+  width:5px;
+  height:5px;
+}
+
+.sphere-genesis .n5{
+  width:8px;
+  height:8px;
 }
 
 
-/* nome do mundo */
+/* =========================================================
+   PREPARAÇÃO PARA NETLIFE MESH SVG
+   ========================================================= */
+
+.netlife-mesh{
+  position:absolute;
+  inset:-8%;
+  width:116%;
+  height:116%;
+  overflow:visible;
+  pointer-events:none;
+  z-index:2;
+}
+
+.netlife-mesh .mesh-back{
+  opacity:.18;
+}
+
+.netlife-mesh .mesh-mid{
+  opacity:.38;
+}
+
+.netlife-mesh .mesh-front{
+  opacity:.68;
+}
+
+.netlife-mesh line,
+.netlife-mesh path{
+  vector-effect:non-scaling-stroke;
+  fill:none;
+  stroke:#111827;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.netlife-mesh circle{
+  vector-effect:non-scaling-stroke;
+}
+
+
+/* =========================================================
+   NOMES
+   ========================================================= */
 
 .netlife-label{
-  margin-top:17px;
+  margin-top:31px;
+
   font-size:10px;
-  font-weight:650;
-  letter-spacing:.18em;
+  font-weight:560;
+
+  letter-spacing:.22em;
+
   white-space:nowrap;
+
   color:#667085;
 }
 
 
-/* movimento quase imperceptível */
+/* =========================================================
+   MOVIMENTO
+   A esfera parece viva, mas não fica "girando".
+   ========================================================= */
+
+.sphere-archive{
+  animation-delay:-2.1s,-4.2s;
+}
+
+.sphere-genesis{
+  animation-delay:-4.3s,-1.7s;
+}
+
+.sphere-archive::after{
+  animation-delay:-2.1s;
+}
+
+.sphere-genesis::after{
+  animation-delay:-4.3s;
+}
 
 @keyframes netlifeFloat{
   0%,100%{
-    transform:translateY(0) rotate(-1deg);
+    transform:
+      translateY(0)
+      rotate(-.35deg);
   }
 
   50%{
-    transform:translateY(-6px) rotate(1deg);
+    transform:
+      translateY(-4px)
+      rotate(.35deg);
   }
 }
 
-@keyframes netlifeBreathe{
+@keyframes netlifeLife{
   0%,100%{
-    filter:contrast(.96);
+    filter:
+      contrast(.97)
+      brightness(1);
   }
 
   50%{
-    filter:contrast(1.06);
+    filter:
+      contrast(1.04)
+      brightness(1.015);
+  }
+}
+
+@keyframes netlifeShadow{
+  0%,100%{
+    opacity:.72;
+    transform:scaleX(1);
+  }
+
+  50%{
+    opacity:.48;
+    transform:scaleX(.84);
+  }
+}
+
+@keyframes netlifeGlow{
+  0%,100%{
+    opacity:.40;
+    transform:scale(.85);
+  }
+
+  50%{
+    opacity:.82;
+    transform:scale(1.15);
   }
 }
 
 
-/* reação ao toque / mouse */
+/* =========================================================
+   INTERAÇÃO
+   Ainda monocromática.
+   A cor virá numa etapa posterior.
+   ========================================================= */
 
 .netlife-world:hover .netlife-sphere,
 .netlife-world:focus-visible .netlife-sphere{
-  transform:scale(1.16);
-  box-shadow:
-    inset -9px -8px 18px rgba(17,24,39,.05),
-    inset 7px 5px 15px rgba(255,255,255,.95),
-    0 20px 26px rgba(17,24,39,.16);
+  transform:scale(1.13);
+
+  filter:
+    contrast(1.06)
+    brightness(1.025);
 }
 
 .netlife-world:active .netlife-sphere{
-  transform:scale(1.22);
+  transform:scale(1.19);
 }
 
 
-/* telas menores */
+/* =========================================================
+   IPHONE MENOR
+   ========================================================= */
 
 @media(max-width:390px){
+
   .netlife-worlds{
     gap:8px;
   }
@@ -298,25 +969,30 @@
   }
 
   .netlife-sphere{
-    width:78px;
-    height:78px;
+    width:82px;
+    height:82px;
   }
 
   .netlife-title{
-    font-size:33px;
+    font-size:36px;
   }
 
   .netlife-label{
     font-size:9px;
-    letter-spacing:.13em;
+    letter-spacing:.17em;
   }
 }
 
 
-/* respeita quem desativa animações */
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
 
 @media(prefers-reduced-motion:reduce){
-  .netlife-sphere{
+
+  .netlife-sphere,
+  .netlife-sphere::before,
+  .netlife-sphere::after{
     animation:none;
   }
 }
