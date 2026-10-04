@@ -37,9 +37,29 @@ function load(){
       ?loaded.watches
       :[];
 
+        let migratedEvents=false;
+
     loaded.events=Array.isArray(loaded.events)
-      ?loaded.events
+      ?loaded.events.map(event=>{
+          if(event&&event.id){
+            return event;
+          }
+
+          migratedEvents=true;
+
+          return {
+            ...event,
+            id:crypto.randomUUID()
+          };
+        })
       :[];
+
+    if(migratedEvents){
+      localStorage.setItem(
+        KEY,
+        JSON.stringify(loaded)
+      );
+    }
 
     loaded.nodes=Array.isArray(loaded.nodes)
       ?loaded.nodes
