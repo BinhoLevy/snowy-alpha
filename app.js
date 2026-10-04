@@ -1411,7 +1411,6 @@ function life(){
   return `
     <div class="netlife">
       <div class="netlife-head">
-        <div class="netlife-brand">SNOWY</div>
 
         <h1 class="netlife-title">
           <span>Snowy</span> NetLife
