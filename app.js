@@ -899,7 +899,8 @@ function applyUnderstanding(data,originalText){
     learnDNA(u.action,.8);
   }
 }
-
+  }
+}
 function applySnowyResult(data,originalText){
   const bridge=applyBridge(
     data,
@@ -1030,6 +1031,10 @@ function eventCard(e,showStatus=false){
           ?`<span class="pill">${esc(statusLabel(status))}</span>`
           :''
       }
+
+      <span class="pill">
+        ID: ${esc(e.id||'sem-id')}
+      </span>
     </div>
   `;
 }
