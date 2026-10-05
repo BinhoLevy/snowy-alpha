@@ -1410,6 +1410,7 @@ function dna(){
 function life(){
   return `
     <div class="netlife">
+
       <div class="netlife-head">
 
         <h1 class="netlife-title">
@@ -1419,39 +1420,227 @@ function life(){
         <p class="netlife-subtitle">
           Sua vida conectada.
         </p>
+
       </div>
 
       <div class="netlife-worlds">
+
+        <!-- FUTURE — NETLIFE MESH 0.3 -->
 
         <button
           class="netlife-world"
           data-netlife="future"
           aria-label="Future"
         >
-          <span class="netlife-sphere sphere-future">
-            <span class="netlife-orbit orbit-a"></span>
-            <span class="netlife-orbit orbit-b"></span>
-            <span class="netlife-orbit orbit-c"></span>
 
-            <i class="node n1"></i>
-            <i class="node n2"></i>
-            <i class="node n3"></i>
-            <i class="node n4"></i>
-            <i class="node n5"></i>
+          <span class="netlife-sphere sphere-future">
+
+            <svg
+              class="netlife-mesh future-mesh"
+              viewBox="0 0 100 100"
+              aria-hidden="true"
+            >
+
+              <!-- profundidade traseira -->
+
+              <g
+                class="mesh-back"
+                stroke="#111827"
+                stroke-width=".45"
+                fill="none"
+              >
+                <path d="M13 49 C14 28 29 12 49 10 C70 9 87 25 90 47 C92 67 77 86 55 90 C33 93 15 75 13 49Z"/>
+
+                <path d="M18 34 C31 18 55 14 75 25 C91 35 92 57 80 72 C67 88 43 90 25 77 C9 65 7 48 18 34Z"/>
+
+                <path d="M23 21 C39 31 55 44 67 61 C74 71 79 80 81 86"/>
+
+                <path d="M14 61 C31 55 50 48 70 38 C78 34 84 28 88 22"/>
+
+                <path d="M28 13 C34 31 42 48 54 64 C63 76 72 83 83 87"/>
+
+                <path d="M12 42 C29 45 48 49 66 58 C76 63 83 70 88 79"/>
+              </g>
+
+
+              <!-- malha intermediária -->
+
+              <g
+                class="mesh-mid"
+                stroke="#111827"
+                stroke-width=".5"
+                fill="none"
+              >
+                <path d="M20 29 L34 18 L51 24 L67 16 L82 30"/>
+                <path d="M20 29 L27 45 L17 60 L32 76 L49 83"/>
+
+                <path d="M34 18 L39 36 L27 45"/>
+                <path d="M39 36 L51 24 L59 41"/>
+                <path d="M51 24 L67 16 L72 35"/>
+                <path d="M67 16 L82 30 L72 35"/>
+
+                <path d="M27 45 L39 36 L48 50"/>
+                <path d="M39 36 L59 41 L48 50"/>
+                <path d="M59 41 L72 35 L69 53"/>
+                <path d="M48 50 L59 41 L69 53"/>
+
+                <path d="M27 45 L17 60 L35 63"/>
+                <path d="M27 45 L48 50 L35 63"/>
+                <path d="M48 50 L52 67 L35 63"/>
+                <path d="M48 50 L69 53 L52 67"/>
+
+                <path d="M69 53 L82 30 L84 51"/>
+                <path d="M69 53 L84 51 L79 69"/>
+                <path d="M69 53 L79 69 L52 67"/>
+
+                <path d="M17 60 L32 76 L35 63"/>
+                <path d="M35 63 L32 76 L49 83"/>
+                <path d="M35 63 L52 67 L49 83"/>
+
+                <path d="M52 67 L68 81 L49 83"/>
+                <path d="M52 67 L79 69 L68 81"/>
+
+                <path d="M79 69 L84 51 L87 64"/>
+                <path d="M79 69 L87 64 L78 79"/>
+                <path d="M79 69 L78 79 L68 81"/>
+              </g>
+
+
+              <!-- fios mais próximos -->
+
+              <g
+                class="mesh-front"
+                stroke="#111827"
+                stroke-width=".58"
+                fill="none"
+              >
+                <path d="M20 29 L48 50 L82 30"/>
+                <path d="M17 60 L48 50 L78 79"/>
+                <path d="M34 18 L48 50 L49 83"/>
+                <path d="M67 16 L48 50 L32 76"/>
+
+                <path d="M13 49 C29 37 47 31 66 33 C76 34 84 39 90 47"/>
+
+                <path d="M16 68 C34 72 53 69 70 59 C80 53 86 45 89 37"/>
+
+                <path d="M30 14 C25 34 27 53 38 70 C44 79 51 85 59 89"/>
+
+                <path d="M76 20 C65 35 59 50 60 65 C60 75 64 83 70 88"/>
+              </g>
+
+
+              <!-- fios quase invisíveis -->
+
+              <g
+                stroke="#111827"
+                stroke-width=".32"
+                fill="none"
+                opacity=".12"
+              >
+                <path d="M16 39 L34 18 L59 41 L82 30"/>
+                <path d="M12 53 L27 45 L52 67 L78 79"/>
+                <path d="M24 79 L35 63 L69 53 L88 43"/>
+                <path d="M40 11 L39 36 L52 67 L61 89"/>
+                <path d="M58 11 L59 41 L35 63 L25 79"/>
+                <path d="M87 58 L69 53 L39 36 L18 34"/>
+              </g>
+
+
+              <!-- nós suaves -->
+
+              <g
+                fill="#6b7280"
+                opacity=".30"
+              >
+                <circle cx="20" cy="29" r="1.15"/>
+                <circle cx="34" cy="18" r=".75"/>
+                <circle cx="51" cy="24" r=".65"/>
+                <circle cx="67" cy="16" r=".9"/>
+                <circle cx="82" cy="30" r=".7"/>
+
+                <circle cx="27" cy="45" r=".7"/>
+                <circle cx="39" cy="36" r=".65"/>
+                <circle cx="59" cy="41" r=".85"/>
+                <circle cx="72" cy="35" r=".6"/>
+
+                <circle cx="17" cy="60" r=".85"/>
+                <circle cx="35" cy="63" r=".65"/>
+                <circle cx="52" cy="67" r=".8"/>
+                <circle cx="69" cy="53" r=".7"/>
+                <circle cx="84" cy="51" r=".7"/>
+
+                <circle cx="32" cy="76" r=".75"/>
+                <circle cx="49" cy="83" r=".65"/>
+                <circle cx="68" cy="81" r=".9"/>
+                <circle cx="79" cy="69" r=".7"/>
+              </g>
+
+
+              <!-- nós principais -->
+
+              <g fill="#111827">
+                <circle cx="22" cy="38" r="1.7"/>
+                <circle cx="70" cy="24" r="1.35"/>
+                <circle cx="48" cy="50" r="2.8"/>
+                <circle cx="76" cy="62" r="1.55"/>
+                <circle cx="36" cy="72" r="1.25"/>
+              </g>
+
+
+              <!-- brilhos -->
+
+              <g fill="none">
+
+                <circle
+                  cx="48"
+                  cy="50"
+                  r="5"
+                  stroke="#ffffff"
+                  stroke-width="3"
+                  opacity=".28"
+                />
+
+                <circle
+                  cx="70"
+                  cy="24"
+                  r="3.2"
+                  stroke="#ffffff"
+                  stroke-width="2"
+                  opacity=".30"
+                />
+
+                <circle
+                  cx="22"
+                  cy="38"
+                  r="3.4"
+                  stroke="#ffffff"
+                  stroke-width="2"
+                  opacity=".22"
+                />
+
+              </g>
+
+            </svg>
+
           </span>
 
           <span class="netlife-label">
             FUTURE
           </span>
+
         </button>
 
+
+        <!-- LIFE ARCHIVE -->
 
         <button
           class="netlife-world"
           data-netlife="archive"
           aria-label="Life Archive"
         >
+
           <span class="netlife-sphere sphere-archive">
+
             <span class="netlife-orbit orbit-a"></span>
             <span class="netlife-orbit orbit-b"></span>
             <span class="netlife-orbit orbit-c"></span>
@@ -1461,20 +1650,26 @@ function life(){
             <i class="node n3"></i>
             <i class="node n4"></i>
             <i class="node n5"></i>
+
           </span>
 
           <span class="netlife-label">
             LIFE ARCHIVE
           </span>
+
         </button>
 
+
+        <!-- GENESIS -->
 
         <button
           class="netlife-world"
           data-netlife="genesis"
           aria-label="Genesis"
         >
+
           <span class="netlife-sphere sphere-genesis">
+
             <span class="netlife-orbit orbit-a"></span>
             <span class="netlife-orbit orbit-b"></span>
             <span class="netlife-orbit orbit-c"></span>
@@ -1484,14 +1679,17 @@ function life(){
             <i class="node n3"></i>
             <i class="node n4"></i>
             <i class="node n5"></i>
+
           </span>
 
           <span class="netlife-label">
             GENESIS
           </span>
+
         </button>
 
       </div>
+
     </div>
   `;
 }
