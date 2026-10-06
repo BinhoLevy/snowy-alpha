@@ -378,7 +378,7 @@ button,input,textarea{
   border:0;
   background:transparent;
   padding:0;
-  width:112px;
+  width:120px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -1024,7 +1024,7 @@ button,input,textarea{
 @media(max-width:390px){
 
   .netlife-worlds{
-    gap:16px;
+    gap:8px;
   }
 
   .netlife-world{
