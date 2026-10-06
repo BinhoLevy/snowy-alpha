@@ -905,6 +905,32 @@ button,input,textarea{
   display:block;
   pointer-events:none;
 }
+
+/* GENESIS — imagem original transparente */
+
+.sphere-genesis{
+  background:none;
+  border:none;
+  box-shadow:none;
+  overflow:visible;
+}
+
+.sphere-genesis::before,
+.sphere-genesis::after{
+  display:none;
+}
+
+.netlife-genesis-reference{
+  position:absolute;
+  width:140%;
+  height:auto;
+  max-width:none;
+  left:50%;
+  top:54%;
+  transform:translate(-50%,-50%);
+  display:block;
+  pointer-events:none;
+}
 /* =========================================================
    NOMES
    ========================================================= */
