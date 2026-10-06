@@ -1486,15 +1486,12 @@ function life(){
 
           <span class="netlife-sphere sphere-genesis">
 
-            <span class="netlife-orbit orbit-a"></span>
-            <span class="netlife-orbit orbit-b"></span>
-            <span class="netlife-orbit orbit-c"></span>
-
-            <i class="node n1"></i>
-            <i class="node n2"></i>
-            <i class="node n3"></i>
-            <i class="node n4"></i>
-            <i class="node n5"></i>
+<img
+  class="netlife-genesis-reference"
+  src="./snowy-genesis-transparent.png"
+  alt=""
+  aria-hidden="true"
+>
 
           </span>
 
