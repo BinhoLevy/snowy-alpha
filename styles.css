@@ -1024,7 +1024,7 @@ button,input,textarea{
 @media(max-width:390px){
 
   .netlife-worlds{
-    gap:8px;
+    gap:16px;
   }
 
   .netlife-world{
