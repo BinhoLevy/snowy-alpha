@@ -866,6 +866,19 @@ button,input,textarea{
   display:block;
   pointer-events:none;
 }
+@keyframes snowyFutureFloat{
+  0%, 100%{
+    transform:translate(-50%,-50%) translateY(0);
+  }
+
+  50%{
+    transform:translate(-50%,-50%) translateY(-3px);
+  }
+}
+
+.netlife-future-reference{
+  animation:snowyFutureFloat 5.5s ease-in-out infinite;
+}
 /* =========================================================
    NOMES
    ========================================================= */
