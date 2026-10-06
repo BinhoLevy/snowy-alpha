@@ -1437,7 +1437,7 @@ function life(){
 
             <img
   class="netlife-future-reference"
-  src="./snowy-future-no-shadow.png"
+  src="./snowy-future-reference.png"
   alt=""
   aria-hidden="true"
 >
