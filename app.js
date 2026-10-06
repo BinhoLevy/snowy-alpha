@@ -1462,7 +1462,7 @@ function life(){
 
             <img
   class="netlife-archive-reference"
-  src="./snowy-life-archive-reference.png"
+  src="./snowy-life-archive-transparent.png"
   alt=""
   aria-hidden="true"
 >
