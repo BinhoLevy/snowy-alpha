@@ -896,11 +896,11 @@ button,input,textarea{
 
 .netlife-archive-reference{
   position:absolute;
-  width:140%;
+  width:165%;
   height:auto;
   max-width:none;
   left:50%;
-  top:54%;
+  top:68%;
   transform:translate(-50%,-50%);
   display:block;
   pointer-events:none;
