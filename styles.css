@@ -879,6 +879,32 @@ button,input,textarea{
 .netlife-future-reference{
   animation:snowyFutureFloat 5.5s ease-in-out infinite;
 }
+
+/* LIFE ARCHIVE — imagem original de referência */
+
+.sphere-archive{
+  background:none;
+  border:none;
+  box-shadow:none;
+  overflow:visible;
+}
+
+.sphere-archive::before,
+.sphere-archive::after{
+  display:none;
+}
+
+.netlife-archive-reference{
+  position:absolute;
+  width:140%;
+  height:auto;
+  max-width:none;
+  left:50%;
+  top:54%;
+  transform:translate(-50%,-50%);
+  display:block;
+  pointer-events:none;
+}
 /* =========================================================
    NOMES
    ========================================================= */
