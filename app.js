@@ -1460,15 +1460,12 @@ function life(){
 
           <span class="netlife-sphere sphere-archive">
 
-            <span class="netlife-orbit orbit-a"></span>
-            <span class="netlife-orbit orbit-b"></span>
-            <span class="netlife-orbit orbit-c"></span>
-
-            <i class="node n1"></i>
-            <i class="node n2"></i>
-            <i class="node n3"></i>
-            <i class="node n4"></i>
-            <i class="node n5"></i>
+            <img
+  class="netlife-archive-reference"
+  src="./snowy-life-archive-reference.png"
+  alt=""
+  aria-hidden="true"
+>
 
           </span>
 
