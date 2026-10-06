@@ -1030,18 +1030,11 @@ button,input,textarea{
    ========================================================= */
 
 .netlife-world:hover .netlife-sphere,
-.netlife-world:focus-visible .netlife-sphere{
-  transform:scale(1.13);
-
-  filter:
-    contrast(1.06)
-    brightness(1.025);
-}
-
+.netlife-world:focus-visible .netlife-sphere,
 .netlife-world:active .netlife-sphere{
-  transform:scale(1.19);
+  transform:none;
+  filter:none;
 }
-
 
 /* =========================================================
    IPHONE MENOR
