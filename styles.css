@@ -877,7 +877,7 @@ button,input,textarea{
 }
 
 .netlife-future-reference{
-  animation:snowyFutureFloat 5.5s ease-in-out infinite;
+  animation:none;
 }
 
 /* LIFE ARCHIVE — imagem original de referência */
