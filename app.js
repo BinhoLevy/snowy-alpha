@@ -1575,6 +1575,15 @@ if(archiveWorld){
     },1150);
   };
 }
+  
+  const archiveBack=document.querySelector('#archiveBack');
+
+if(archiveBack){
+  archiveBack.onclick=()=>{
+    view='life';
+    render();
+  };
+}
   const send=document.querySelector('#send');
 
   if(send){
