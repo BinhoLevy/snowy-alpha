@@ -1060,7 +1060,7 @@ button,input,textarea{
 .netlife-world[data-netlife="archive"].netlife-entering .netlife-archive-reference{
   transform:
     translate(-50%,-50%)
-    scale(2.15);
+    scale(8);
 }
 
 @media(max-width:390px){
