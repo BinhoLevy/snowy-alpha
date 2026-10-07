@@ -1040,6 +1040,29 @@ button,input,textarea{
    IPHONE MENOR
    ========================================================= */
 
+/* LIFE ARCHIVE — entrada na NetLife */
+
+.netlife-world[data-netlife="archive"]{
+  position:relative;
+  z-index:2;
+}
+
+.netlife-world[data-netlife="archive"].netlife-entering{
+  z-index:20;
+}
+
+.netlife-world[data-netlife="archive"] .netlife-archive-reference{
+  transition:
+    transform 1.15s cubic-bezier(.22,.8,.22,1),
+    opacity .7s ease;
+}
+
+.netlife-world[data-netlife="archive"].netlife-entering .netlife-archive-reference{
+  transform:
+    translate(-50%,-50%)
+    scale(2.15);
+}
+
 @media(max-width:390px){
 
   .netlife-worlds{
