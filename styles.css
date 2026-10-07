@@ -861,7 +861,7 @@ button,input,textarea{
   height:auto;
   max-width:none;
   left:50%;
-  top:48%;
+  top:49%;
   transform:translate(-50%,-50%);
   display:block;
   pointer-events:none;
