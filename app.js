@@ -1261,13 +1261,15 @@ function render(){
     return;
   }
 
-  const body=
-    view==='home'
-      ?home()
-      :view==='chat'
-        ?chat()
-        :view==='dna'
-          ?dna()
+const body=
+  view==='home'
+    ?home()
+    :view==='chat'
+      ?chat()
+      :view==='dna'
+        ?dna()
+        :view==='archiveInside'
+          ?archiveInside()
           :life();
 
   app.innerHTML=`
@@ -1506,6 +1508,48 @@ function life(){
     </div>
   `;
 }
+function archiveInside(){
+  return `
+    <div class="archive-inside">
+
+      <button
+        class="archive-back"
+        id="archiveBack"
+        aria-label="Voltar para Snowy NetLife"
+      >
+        ‹
+      </button>
+
+      <div class="archive-space" id="archiveSpace">
+
+        <div class="archive-sphere">
+
+          <div class="archive-node node-1"></div>
+          <div class="archive-node node-2"></div>
+          <div class="archive-node node-3"></div>
+          <div class="archive-node node-4"></div>
+          <div class="archive-node node-5"></div>
+          <div class="archive-node node-6"></div>
+          <div class="archive-node node-7"></div>
+          <div class="archive-node node-8"></div>
+
+          <div class="archive-line line-1"></div>
+          <div class="archive-line line-2"></div>
+          <div class="archive-line line-3"></div>
+          <div class="archive-line line-4"></div>
+          <div class="archive-line line-5"></div>
+
+        </div>
+
+      </div>
+
+      <div class="archive-inside-label">
+        LIFE ARCHIVE
+      </div>
+
+    </div>
+  `;
+}
 
 function bind(){
   document
@@ -1524,6 +1568,11 @@ const archiveWorld=document.querySelector(
 if(archiveWorld){
   archiveWorld.onclick=()=>{
     archiveWorld.classList.add('netlife-entering');
+
+    setTimeout(()=>{
+      view='archiveInside';
+      render();
+    },1150);
   };
 }
   const send=document.querySelector('#send');
