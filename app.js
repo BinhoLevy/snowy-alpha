@@ -1516,7 +1516,16 @@ function bind(){
         render();
       };
     });
+  
+const archiveWorld=document.querySelector(
+  '[data-netlife="archive"]'
+);
 
+if(archiveWorld){
+  archiveWorld.onclick=()=>{
+    archiveWorld.classList.add('netlife-entering');
+  };
+}
   const send=document.querySelector('#send');
 
   if(send){
