@@ -1,7 +1,6 @@
 /* SNOWY NETLIFE — 3D ENGINE 0.1 */
 
-import * as THREE from
-  'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+import * as THREE from 'https://esm.sh/three@0.160.1';
 
 export function createNetLife3D(container){
 
