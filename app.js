@@ -1575,6 +1575,61 @@ if(archiveWorld){
     },1150);
   };
 }
+
+  /* NETLIFE — CONTROLE DE VISÃO 360° */
+
+const archiveSpace=document.querySelector('#archiveSpace');
+
+if(archiveSpace){
+  const sphere=archiveSpace.querySelector('.archive-sphere');
+
+  if(sphere){
+    let dragging=false;
+    let lastX=0;
+    let lastY=0;
+    let rotationX=0;
+    let rotationY=0;
+
+    archiveSpace.addEventListener('pointerdown',e=>{
+      dragging=true;
+      lastX=e.clientX;
+      lastY=e.clientY;
+      archiveSpace.setPointerCapture(e.pointerId);
+    });
+
+    archiveSpace.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+
+      const dx=e.clientX-lastX;
+      const dy=e.clientY-lastY;
+
+      lastX=e.clientX;
+      lastY=e.clientY;
+
+      rotationY+=dx*.35;
+      rotationX-=dy*.35;
+
+      rotationX=Math.max(
+        -89,
+        Math.min(89,rotationX)
+      );
+
+      sphere.style.transform=`
+        translate(-50%,-50%)
+        rotateX(${rotationX}deg)
+        rotateY(${rotationY}deg)
+      `;
+    });
+
+    const stop=()=>{
+      dragging=false;
+    };
+
+    archiveSpace.addEventListener('pointerup',stop);
+    archiveSpace.addEventListener('pointercancel',stop);
+    archiveSpace.addEventListener('lostpointercapture',stop);
+  }
+}
   
   const archiveBack=document.querySelector('#archiveBack');
 
