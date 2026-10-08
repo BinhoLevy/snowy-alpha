@@ -1253,3 +1253,21 @@ button,input,textarea{
   color:rgba(0,0,0,.45);
   white-space:nowrap;
 }
+
+/* SNOWY NETLIFE — ÁREA 3D */
+
+#netlife3d{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  touch-action:none;
+}
+
+#netlife3d canvas{
+  display:block;
+  width:100%;
+  height:100%;
+  touch-action:none;
+}
