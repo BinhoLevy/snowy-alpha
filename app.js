@@ -1521,6 +1521,8 @@ function archiveInside(){
       </button>
 
       <div class="archive-space" id="archiveSpace">
+  <div id="netlife3d"></div>
+</div>
 
         <div class="archive-sphere">
 
@@ -1576,61 +1578,31 @@ if(archiveWorld){
   };
 }
 
-  /* NETLIFE — CONTROLE DE VISÃO 360° */
+  /* SNOWY NETLIFE — ATIVAR UNIVERSO 3D */
 
-const archiveSpace=document.querySelector('#archiveSpace');
+const netlifeContainer=document.querySelector('#netlife3d');
 
-if(archiveSpace){
-  const sphere=archiveSpace.querySelector('.archive-sphere');
+if(netlifeContainer){
+  import('./netlife3d.js')
+    .then(module=>{
+      if(!netlifeContainer.isConnected)return;
 
-  if(sphere){
-    let dragging=false;
-    let lastX=0;
-    let lastY=0;
-    let rotationX=0;
-    let rotationY=0;
-
-    archiveSpace.addEventListener('pointerdown',e=>{
-      dragging=true;
-      lastX=e.clientX;
-      lastY=e.clientY;
-      archiveSpace.setPointerCapture(e.pointerId);
-    });
-
-    archiveSpace.addEventListener('pointermove',e=>{
-      if(!dragging)return;
-
-      const dx=e.clientX-lastX;
-      const dy=e.clientY-lastY;
-
-      lastX=e.clientX;
-      lastY=e.clientY;
-
-      rotationY+=dx*.35;
-      rotationX-=dy*.35;
-
-      rotationX=Math.max(
-        -89,
-        Math.min(89,rotationX)
+      const destroy3D=module.createNetLife3D(
+        netlifeContainer
       );
 
-      sphere.style.transform=`
-        translate(-50%,-50%)
-        rotateX(${rotationX}deg)
-        rotateY(${rotationY}deg)
-      `;
+      const backButton=document.querySelector('#archiveBack');
+
+      if(backButton){
+        backButton.addEventListener('click',()=>{
+          destroy3D();
+        },{once:true});
+      }
+    })
+    .catch(error=>{
+      console.error('Snowy NetLife 3D:',error);
     });
-
-    const stop=()=>{
-      dragging=false;
-    };
-
-    archiveSpace.addEventListener('pointerup',stop);
-    archiveSpace.addEventListener('pointercancel',stop);
-    archiveSpace.addEventListener('lostpointercapture',stop);
-  }
-}
-  
+}  
   const archiveBack=document.querySelector('#archiveBack');
 
 if(archiveBack){
