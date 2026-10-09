@@ -1579,29 +1579,6 @@ if(archiveWorld){
 }
 
   /* SNOWY NETLIFE — ATIVAR UNIVERSO 3D */
-/* DIAGNÓSTICO — QUEM RECEBE O TOQUE? */
-
-const archiveInsideScreen=document.querySelector('.archive-inside');
-
-if(archiveInsideScreen){
-  archiveInsideScreen.addEventListener('pointerdown',e=>{
-    const element=document.elementFromPoint(
-      e.clientX,
-      e.clientY
-    );
-
-    alert(
-      'TOQUE EM: '+
-      (element?.tagName||'desconhecido')+
-      ' | ID: '+
-      (element?.id||'sem ID')+
-      ' | CLASSE: '+
-      (typeof element?.className==='string'
-        ?element.className
-        :'sem classe')
-    );
-  },{once:true,capture:true});
-}
   
 const netlifeContainer=document.querySelector('#netlife3d');
 
@@ -1613,8 +1590,6 @@ if(netlifeContainer){
       const destroy3D=module.createNetLife3D(
         netlifeContainer
       );
-
-      alert('Snowy NetLife: motor 3D iniciado!');
 
       const backButton=document.querySelector('#archiveBack');
 
