@@ -1283,3 +1283,23 @@ button,input,textarea{
   inset:0;
   z-index:10;
 }
+
+/* NETLIFE 3D — PRIORIDADE DE TOQUE */
+
+.archive-space{
+  pointer-events:none;
+}
+
+#netlife3d{
+  pointer-events:auto;
+  z-index:50;
+}
+
+#netlife3d canvas{
+  pointer-events:auto;
+  touch-action:none;
+}
+
+.archive-back{
+  z-index:100;
+}
