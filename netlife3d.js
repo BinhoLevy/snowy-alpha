@@ -121,7 +121,6 @@ export function createNetLife3D(container){
     'pointerdown',
     e=>{
       dragging=true;
-      alert('TOQUE RECEBIDO PELO 3D!');
       lastX=e.clientX;
       lastY=e.clientY;
       renderer.domElement.setPointerCapture(e.pointerId);
