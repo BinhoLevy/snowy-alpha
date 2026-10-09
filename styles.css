@@ -1303,3 +1303,9 @@ button,input,textarea{
 .archive-back{
   z-index:100;
 }
+
+/* NETLIFE — DESATIVAR CAMADA ANTIGA */
+
+.archive-inside .archive-sphere{
+  display:none;
+}
