@@ -1569,11 +1569,27 @@ const archiveWorld=document.querySelector(
 
 if(archiveWorld){
   archiveWorld.onclick=()=>{
+    if(archiveWorld.classList.contains('netlife-entering')){
+      return;
+    }
+
     archiveWorld.classList.add('netlife-entering');
 
     setTimeout(()=>{
       view='archiveInside';
       render();
+
+      const inside=document.querySelector('.archive-inside');
+
+      if(inside){
+        inside.classList.add('netlife-arriving');
+
+        requestAnimationFrame(()=>{
+          requestAnimationFrame(()=>{
+            inside.classList.add('netlife-arrived');
+          });
+        });
+      }
     },1150);
   };
 }
