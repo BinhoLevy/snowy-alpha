@@ -1281,6 +1281,5 @@ button,input,textarea{
 #netlife3d{
   position:absolute;
   inset:0;
-  background:#ff0000;
   z-index:10;
 }
