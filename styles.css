@@ -1271,3 +1271,16 @@ button,input,textarea{
   height:100%;
   touch-action:none;
 }
+
+/* TESTE TEMPORÁRIO — ÁREA 3D */
+
+.archive-space{
+  inset:0;
+}
+
+#netlife3d{
+  position:absolute;
+  inset:0;
+  background:#ff0000;
+  z-index:10;
+}
