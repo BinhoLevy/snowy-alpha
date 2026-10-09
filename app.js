@@ -1591,6 +1591,8 @@ if(netlifeContainer){
         netlifeContainer
       );
 
+      alert('Snowy NetLife: motor 3D iniciado!');
+
       const backButton=document.querySelector('#archiveBack');
 
       if(backButton){
@@ -1600,8 +1602,9 @@ if(netlifeContainer){
       }
     })
     .catch(error=>{
-      console.error('Snowy NetLife 3D:',error);
-    });
+  console.error('Snowy NetLife 3D:',error);
+  alert('Erro no motor 3D: '+error.message);
+});
 }  
   const archiveBack=document.querySelector('#archiveBack');
 
