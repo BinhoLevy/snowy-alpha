@@ -1309,3 +1309,14 @@ button,input,textarea{
 .archive-inside .archive-sphere{
   display:none;
 }
+
+/* SNOWY NETLIFE — TRANSIÇÃO DE ENTRADA */
+
+.archive-inside.netlife-arriving{
+  opacity:0;
+}
+
+.archive-inside.netlife-arrived{
+  opacity:1;
+  transition:opacity 1.2s ease-in-out;
+}
