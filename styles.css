@@ -1052,9 +1052,9 @@ button,input,textarea{
 }
 
 .netlife-world[data-netlife="archive"] .netlife-archive-reference{
-  transition:
-    transform 1.15s cubic-bezier(.22,.8,.22,1),
-    opacity .7s ease;
+ transition:
+  transform 1.8s cubic-bezier(.42,0,1,1),
+  opacity .7s ease;
 }
 
 .netlife-world[data-netlife="archive"].netlife-entering .netlife-archive-reference{
